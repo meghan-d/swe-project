@@ -1,39 +1,45 @@
-import { useState } from "react";
+import React from 'react';
 import './LoginPage.css';
+import { FaUser, FaLock } from 'react-icons/fa';  // Icons for username & password
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Logging in with:", email, password);
-    // Add authentication logic here
-  };
-
   return (
-    <div className="login-container">
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <label>Email:</label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+    <div 
+      className="login-container"
+      style={{
+        backgroundImage: `url(${process.env.PUBLIC_URL + '/movie.jpg'})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        height: '100vh',
+      }}
+    >
+      <div className="login-box">
+        <h1>Cinema E-Booking Login</h1>
+        <form>
+          <div className="input-group">
+            <i><FaUser /></i>
+            <input type="text" className="input-field" placeholder="Username" />
+          </div>
 
-        <label>Password:</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+          <div className="input-group">
+            <i><FaLock /></i>
+            <input type="password" className="input-field" placeholder="Password" />
+          </div>
 
-        <button type="submit">Login</button>
-      </form>
-      <p>Forgot your password? <a href="#">Reset it here</a></p>
+          <div className="options">
+            <label>
+              <input type="checkbox" /> Remember Me
+            </label>
+            <a href="#">Forgot Password</a>
+          </div>
+
+          <button type="submit" className="login-button">Login</button>
+
+          <div className="signup">
+            <p>Sign Up</p>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
