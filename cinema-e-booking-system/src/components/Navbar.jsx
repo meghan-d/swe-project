@@ -1,54 +1,45 @@
-import React from 'react';
+import React, { useState } from "react";
 import { ReactComponent as SearchIcon} from '../svg/SearchIcon.svg';
 
 export default function Navbar() {
-  return (
-    <nav className="bg-gradient-to-r from-gray-600 via-blue-950 to-gray-600 p-5">
-        <div className="container mx-auto flex justify-between items-center">
+    const [searchQuery, setSearchQuery] = useState("");
+
+    const handleChange = (e) => {
+        setSearchQuery(e.target.value);
+  };
+ 
+  
+    return (
+    <nav className="bg-white shadow-md p-4">
+        <div className="mx-auto flex justify-between items-center py-2 px-6">
             
-            {/* Website Name - stays aligned to the left */}
-            <div className="text-white text-5xl font-semibold">
-                <a href="/HomePage.jsx" className="hover:text-gray-200">Cinema E-Booking</a>
+            {/* Website Name */}
+            <div className="text-5xl font-bold">
+                <a href="/" className="hover:text-gray-500">Cinema E-Booking</a>
             </div>
 
-            {/* Search Bar Container */}
-            <div className="flex items-center space-x-1 mr-2 ml-2">
-
-                {/* Search Bar */}
+            {/* Search Bar */}
+            <div className="flex items-centered border-4 border-gray-400 px-3 py-2 rounded-3xl bg-gray-200 sm:w-[200px] md:w-[300px] lg:w-[400px]">
                 <input
                     type="text"
                     placeholder="Search Movies"
-                    className="w-80 pt-2 pb-2 pl-3 pr-3 rounded-2xl text-black border-2 border-white focus:outline-none focus:ring-2 focus:ring-gray-200" 
+                    className="bg-transparent outline-none w-full"
+                    value={searchQuery}
+                    onChange={handleChange}
                 />
-
-                {/* Search Button */}
                 <button 
-                    className="bg-white px-3 py-2 rounded-2xl hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                    onClick={() => alert('Search button clicked')} // Replace with actual search logic
-                >
+                    className="bg-white px-3 py-2 rounded-2xl border-2 border-gray-400 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400 ml-2"
+                    onClick={() => alert('Search button clicked')}> 
                     <SearchIcon className="w-7 h-7"/>
                 </button>
-
             </div>
 
-            {/* Registration and Login Button Container */}
-            <div className="flex items-center space-x-2">
-
-                {/* Registration Button */}
-                <button
-                    className="border-2 border-white text-white px-5 py-3 rounded-2xl hover:bg-white hover:text-gray-700"
-                    onClick={() => window.location.href = '/Registration.jsx'} // Navigate to Registration page
-                >
-                    Register
-                </button>
-
-                {/* Login Button */}
-                <button 
-                    className="border-2 border-white text-white px-5 py-3 rounded-2xl hover:bg-white hover:text-gray-700"
-                    onClick={() => window.location.href = '/LoginPage.jsx'} // Navigate to Login page
-                >
-                    Login
-                </button>
+            {/* Sign Up & Log In Buttons */}
+            <div className="right-6 top-4 flex flex-wrap justify-end gap-2 text-xl">
+                <button className="border-4 border-gray-400 px-6 py-2 rounded-full w-[120px] bg-white focus:outlin-none focus:ring-2 focus:ring-gray-400"
+                onClick={() => alert('Sign Up button clicked')}>Sign Up</button>
+                <button className="border-4 border-gray-400 px-6 py-2 rounded-full w-[120px] bg-white focus:outlin-none focus:ring-2 focus:ring-gray-400"
+                onClick={() => alert('Log In button clicked')}>Log In</button>
             </div>
         </div>
     </nav>
