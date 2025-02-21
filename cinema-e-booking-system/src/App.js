@@ -1,7 +1,12 @@
-import './App.css';
+import React from 'react';
+import HomePage from './pages/HomePage';  // Import your HomePage component
 
-export default function App() {
+const App = () => {
   return (
-    <h1 className="text-3xl font-bold text-blue-500">Cinema E-Booking System</h1>
-  )
-}
+    <div className="App">
+      <HomePage /> {/* Render the homepage directly */}
+    </div>
+  );
+};
+
+export default App;
