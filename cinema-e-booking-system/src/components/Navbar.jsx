@@ -10,7 +10,7 @@ export default function Navbar() {
  
   
     return (
-    <nav className="bg-white shadow-md p-4">
+    <nav className="bg-white shadow-md p-4 sticky top-0 z-50">
         <div className="mx-auto flex justify-between items-center py-2 px-6">
             
             {/* Website Name */}
