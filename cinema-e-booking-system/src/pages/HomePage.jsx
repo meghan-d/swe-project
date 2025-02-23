@@ -1,6 +1,7 @@
-import React from 'react';
-import Navbar from '../components/Navbar';  
-import MovieList from '../components/MovieList';
+import React from "react";
+import Navbar from "../components/Navbar";
+import MovieList from "../components/MovieList";
+import "../pages/HomePage.css"; // Import the CSS file
 
 const sampleMovies1 = [
   { 
@@ -59,12 +60,13 @@ const sampleMovies2 = [
 ];
 
 const HomePage = () => {
-
   return (
-    <div className="bg-gray-200 min-h-screen pb-8">
-      <Navbar/> 
-      <MovieList title="Currently Running Movies" movies={sampleMovies1}/>
-      <MovieList title="Coming Soon!" allowToBook={false} movies={sampleMovies2}/>
+    <div className="homepage">
+      <Navbar />
+      <div className="homepage-content">
+        <MovieList title="🎬 Currently Running Movies" movies={sampleMovies1} />
+        <MovieList title="🍿 Coming Soon!" allowToBook={false} movies={sampleMovies2} />
+      </div>
     </div>
   );
 };
