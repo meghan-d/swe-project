@@ -1,46 +1,7 @@
 import React, { useState } from "react";
 import MovieCard from "./MovieCard";
 
-const sampleMovies = [
-    { 
-        title: "Inception", 
-        poster: "https://m.media-amazon.com/images/I/71uKM+LdgFL.jpg", 
-        trailer: "https://www.youtube.com/embed/8hP9D6kZseM" 
-    },
-    { 
-        title: "Inception", 
-        poster: "https://m.media-amazon.com/images/I/71uKM+LdgFL.jpg", 
-        trailer: "https://www.youtube.com/embed/8hP9D6kZseM" 
-    },
-    { 
-        title: "Inception", 
-        poster: "https://m.media-amazon.com/images/I/71uKM+LdgFL.jpg", 
-        trailer: "https://www.youtube.com/embed/8hP9D6kZseM" 
-    },
-    { 
-        title: "Inception", 
-        poster: "https://m.media-amazon.com/images/I/71uKM+LdgFL.jpg", 
-        trailer: "https://www.youtube.com/embed/8hP9D6kZseM" 
-    },
-    { 
-        title: "Inception", 
-        poster: "https://m.media-amazon.com/images/I/71uKM+LdgFL.jpg", 
-        trailer: "https://www.youtube.com/embed/8hP9D6kZseM" 
-    },
-    { 
-        title: "Inception", 
-        poster: "https://m.media-amazon.com/images/I/71uKM+LdgFL.jpg", 
-        trailer: "https://www.youtube.com/embed/8hP9D6kZseM" 
-    },
-    { 
-        title: "Inception", 
-        poster: "https://m.media-amazon.com/images/I/71uKM+LdgFL.jpg", 
-        trailer: "https://www.youtube.com/embed/8hP9D6kZseM" 
-    }
-];
-
-export default function MovieList({ title, allowToBook }) {
-    const [movies] = useState(sampleMovies); // example movies
+export default function MovieList({ title, allowToBook, movies }) {
 
     return (
         <section className="mt-8 px-6">
