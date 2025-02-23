@@ -23,9 +23,9 @@ const AdminDashboard = () => {
       {/* Sidebar */}
       <aside className="sidebar">
         <h2>Admin Panel</h2>
-        <button onClick={() => navigate('/manage-movies')}>Manage Movies</button>
-        <button onClick={() => navigate('/manage-users')}>Manage Users</button>
-        <button onClick={() => navigate('/manage-promotions')}>Manage Promotions</button>
+        <button onClick={() => navigate('/admin-movies')}>Manage Movies</button>
+        <button onClick={() => navigate('/admin-users')}>Manage Users</button>
+        <button onClick={() => navigate('/admin-promotions')}>Manage Promotions</button>
       </aside>
 
       {/* Main Content */}
@@ -114,6 +114,7 @@ const AdminDashboard = () => {
           border: none;
           cursor: pointer;
           transition: 0.3s;
+          margin-bottom: 10px;
         }
 
         .sidebar button:hover {

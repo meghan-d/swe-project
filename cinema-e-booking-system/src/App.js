@@ -3,6 +3,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';  // Keep HomePage
 import LoginPage from './pages/LoginPage';  // Keep LoginPage
 import AdminDashboard from './pages/AdminDashboard';
+import AdminMovies from './pages/AdminMovies';
+import AdminPromotions from './pages/AdminPromotions';
+import AdminUsers from './pages/AdminUsers';
 const App = () => {
   return (
     <Router>
@@ -10,7 +13,9 @@ const App = () => {
         <Route path="/" element={<HomePage />} />  {/* Home Page as the default page */}
         <Route path="/login" element={<LoginPage />} />  {/* Login Page Route */}
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
-
+        <Route path="/admin-movies" element={<AdminMovies />} />
+        <Route path="/admin-promotions" element={<AdminPromotions />} />
+        <Route path="/admin-users" element={<AdminUsers />} />
       </Routes>
     </Router>
   );

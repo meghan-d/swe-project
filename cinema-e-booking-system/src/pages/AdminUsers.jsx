@@ -1,25 +1,25 @@
 import React from 'react';
 
-const AdminPromotions = () => {
+const AdminUsers = () => {
   return (
     <div className="admin-page">
-      <h1>Manage Promotions</h1>
-      <button className="add-btn">Create New Promotion</button>
+      <h1>Manage Users</h1>
+      <button className="add-btn">Add New User</button>
       
       <table>
         <thead>
           <tr>
-            <th>Promo Name</th>
-            <th>Discount</th>
-            <th>Expiration</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>Summer Special</td>
-            <td>20% Off</td>
-            <td>July 15, 2025</td>
+            <td>JohnDoe</td>
+            <td>johndoe@example.com</td>
+            <td>Admin</td>
             <td>
               <button className="edit-btn">Edit</button>
               <button className="delete-btn">Delete</button>
@@ -31,4 +31,4 @@ const AdminPromotions = () => {
   );
 };
 
-export default AdminPromotions;
+export default AdminUsers;
