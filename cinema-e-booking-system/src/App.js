@@ -2,13 +2,15 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';  // Keep HomePage
 import LoginPage from './pages/LoginPage';  // Keep LoginPage
-
+import AdminDashboard from './pages/AdminDashboard';
 const App = () => {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />  {/* Home Page as the default page */}
         <Route path="/login" element={<LoginPage />} />  {/* Login Page Route */}
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+
       </Routes>
     </Router>
   );
