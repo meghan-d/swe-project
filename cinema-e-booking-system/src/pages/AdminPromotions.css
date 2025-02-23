@@ -1,0 +1,105 @@
+.admin-container {
+    background-color: #121212;
+    color: white;
+    min-height: 100vh;
+    padding: 40px;
+    text-align: center;
+  }
+  
+  .admin-title {
+    font-size: 28px;
+    color: #FFD700;
+    text-shadow: 0px 4px 10px rgba(255, 215, 0, 0.5);
+    margin-bottom: 20px;
+  }
+  
+  /* Promotions Table */
+  .admin-table {
+    background: #222222;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(255, 215, 0, 0.3);
+    width: 70%;
+    margin: auto;
+    text-align: left;
+  }
+  
+  .table-header, .table-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #444;
+  }
+  
+  .table-header {
+    font-weight: bold;
+    color: #FFD700;
+  }
+  
+  .active {
+    color: #FFD700;
+  }
+  
+  .expired {
+    color: #DC3545;
+  }
+  
+  /* Add Promotion Section - Centering & Aligning Elements */
+  .add-promo-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px; /* Added better spacing */
+    margin-top: 20px;
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  /* Styled Input & Select Box */
+  .promo-input, .promo-select {
+    padding: 12px;
+    border-radius: 6px;
+    border: 2px solid #FFD700;
+    background: #222222;
+    color: white; /* Ensures text is visible */
+    font-size: 16px;
+    width: 240px;  /* Increased width for better alignment */
+    text-align: center;
+  }
+  
+  .promo-input::placeholder {
+    color: #bbb;
+  }
+  
+  /* Match Styling with 'Add Promotion' Button */
+  .add-promo, .promo-input, .promo-select {
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-size: 16px;
+  }
+  
+  /* Add Promotion Button */
+  .add-promo {
+    background: #FFD700;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0px 4px 10px rgba(255, 215, 0, 0.3);
+    border: none;
+    width: 180px; /* Match input width */
+  }
+  
+  .add-promo:hover {
+    background: #d4af37;
+  }
+  
+  /* Delete Button */
+  .delete-button {
+    background: #DC3545;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
