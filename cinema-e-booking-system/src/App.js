@@ -1,20 +1,17 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import LoginPage from './pages/LoginPage'; // Updated import path
+import HomePage from './pages/HomePage';  // Keep HomePage
+import LoginPage from './pages/LoginPage';  // Keep LoginPage
 
-function App() {
+const App = () => {
   return (
     <Router>
       <Routes>
-        {/* Default Route for Login Page */}
-        <Route path="/" element={<LoginPage />} />
-
-        {/* Additional Routes (if needed) */}
-        {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-        {/* <Route path="/signup" element={<SignUp />} /> */}
+        <Route path="/" element={<HomePage />} />  {/* Home Page as the default page */}
+        <Route path="/login" element={<LoginPage />} />  {/* Login Page Route */}
       </Routes>
     </Router>
   );
-}
+};
 
 export default App;
