@@ -1,5 +1,3 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import ProfileEdit from './pages/ProfileEdit';
@@ -14,6 +12,7 @@ import Registration from "./pages/Registration";
 import RegistrationConfirm from "./pages/RegistrationConfirm";
 import AdminPromotions from './pages/AdminPromotions';
 import AdminUsers from './pages/AdminUsers';
+
 
 const App = () => {
   return (
