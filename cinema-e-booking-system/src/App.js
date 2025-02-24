@@ -6,7 +6,7 @@ import ProfileEdit from './pages/ProfileEdit';
 import MovieSelection from './pages/MovieSelection';
 import SeatSelection from './pages/SeatSelection';
 import Checkout from './pages/Checkout';
-import OrderSummary from './components/OrderSummary';
+import OrderSummary from './pages/OrderSummary';
 import OrderConfirmation from './pages/OrderConfirmation';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminMovies from './pages/AdminMovies';
