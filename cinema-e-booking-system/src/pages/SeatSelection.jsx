@@ -64,7 +64,7 @@ const SeatSelection = () => {
           Selected Seats: {selectedSeats.map(i => `${String.fromCharCode(65 + Math.floor(i/8))}${i % 8 + 1}`).join(', ')}
         </p>
         <button 
-          onClick={() => window.location.href = '/checkout'}
+          onClick={() => window.location.href = '/order-summary'}
           className="mt-4 bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
           disabled={selectedSeats.length === 0}
         >
