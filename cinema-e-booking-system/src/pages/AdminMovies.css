@@ -1,0 +1,103 @@
+.admin-container {
+    background-color: #121212;
+    color: white;
+    min-height: 100vh;
+    padding: 40px;
+    text-align: center;
+  }
+  
+  .admin-title {
+    font-size: 28px;
+    color: #FFD700;
+    text-shadow: 0px 4px 10px rgba(255, 215, 0, 0.5);
+    margin-bottom: 20px;
+  }
+  
+  /* Movies Table */
+  .admin-table {
+    background: #222222;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(255, 215, 0, 0.3);
+    width: 70%;
+    margin: auto;
+    text-align: left;
+  }
+  
+  .table-header, .table-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #444;
+  }
+  
+  .table-header {
+    font-weight: bold;
+    color: #FFD700;
+  }
+  
+  .active {
+    color: #FFD700;
+  }
+  
+  .upcoming {
+    color: #FFA500;
+  }
+  
+  /* Add Movie Section */
+  .add-movie-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  /* Styled Input & Select Box */
+  .movie-input, .movie-select {
+    padding: 12px;
+    border-radius: 6px;
+    border: 2px solid #FFD700;
+    background: #222222;
+    color: white;
+    font-size: 16px;
+    width: 240px;
+    text-align: center;
+  }
+  
+  .movie-input::placeholder {
+    color: #bbb;
+  }
+  
+  /* Add Movie Button */
+  .add-movie {
+    background: #FFD700;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0px 4px 10px rgba(255, 215, 0, 0.3);
+    border: none;
+    width: 180px;
+  }
+  
+  .add-movie:hover {
+    background: #d4af37;
+  }
+  
+  /* Delete Button */
+  .delete-button {
+    background: #DC3545;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+  }
+  
+  .delete-button:hover {
+    background: #a71d2a;
+  }
+  

@@ -1,0 +1,107 @@
+/* Container */
+.container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Title */
+  .title {
+    text-align: center;
+    color: #333333;
+    margin-bottom: 30px;
+    font-size: 24px;
+  }
+  
+  /* Form Groups */
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  /* Labels */
+  .label {
+    display: block;
+    margin-bottom: 8px;
+    color: #555555;
+    font-weight: 500;
+  }
+  
+  /* Inputs */
+  .input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  
+  .input:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 5px rgba(74, 144, 226, 0.2);
+  }
+  
+  /* Error Messages */
+  .error-message {
+    color: #dc3545;
+    font-size: 14px;
+    margin-top: 5px;
+  }
+  
+  /* Success Message */
+  .success-message {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  /* Button Group */
+  .button-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 30px;
+  }
+  
+  /* Buttons */
+  .button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  /* Save Button */
+  .button-save {
+    background-color: #4a90e2;
+    color: white;
+  }
+  
+  .button-save:hover {
+    background-color: #357abd;
+  }
+  
+  .button-save:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  /* Cancel Button */
+  .button-cancel {
+    background-color: #f8f9fa;
+    color: #333333;
+    border: 1px solid #dddddd;
+  }
+  
+  .button-cancel:hover {
+    background-color: #e9ecef;
+  }
+  
