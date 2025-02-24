@@ -1,38 +1,89 @@
-.App {
-  text-align: center;
+/* Global Styling */
+body {
+  background-color: #121212; /* Dark Mode */
+  color: white;
+  font-family: 'Lora', serif; /* Elegant readability */
+  margin: 0;
+  padding: 0;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* Buttons */
+.button {
+  padding: 12px 24px;
+  border: 2px solid gold;
+  background: transparent;
+  color: gold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  font-family: 'Playfair Display', serif;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.button:hover {
+  background-color: gold;
+  color: black;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* Inputs */
+.input {
+  width: 100%;
+  padding: 10px;
+  background: #222;
+  border: 1px solid gold;
+  color: white;
+  font-size: 16px;
+  border-radius: 4px;
+}
+
+.input:focus {
+  border-color: gold;
+  outline: none;
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+}
+
+/* Navbar */
+.navbar {
+  background: black;
+  padding: 20px;
+  border-bottom: 3px solid gold;
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+}
+
+.navbar a {
+  color: gold;
+  font-size: 18px;
+  text-decoration: none;
+  font-family: 'Playfair Display', serif;
+}
+
+.navbar a:hover {
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+/* Movie Cards */
+.movie-card {
+  background: #222;
+  border: 2px solid gold;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  transition: transform 0.3s ease-in-out;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.movie-card:hover {
+  transform: scale(1.05);
+}
+
+/* Section Headings */
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  color: gold;
+  text-align: center;
+  margin-bottom: 20px;
+  border-bottom: 2px solid gold;
+  padding-bottom: 10px;
+  display: inline-block;
 }
