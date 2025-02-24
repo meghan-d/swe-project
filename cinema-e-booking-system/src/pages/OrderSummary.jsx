@@ -4,10 +4,10 @@ export default function OrderSummary() {
     const orderDetails = {
         movieTitle: "Inception",
         date: "March 1, 2025",
-        time: "8:00 PM",
-        seats: ["A1", "A2", "A3"],
+        time: "7:00 PM",
+        seats: ["A3 (Adult)", "A4 (Adult)"],
+        ticketPrice: 10,
         payment: { cardNumber: "**** **** **** 1234", expiration: "1/26" },
-        total: 32.25,
     };
 
     return (
@@ -21,7 +21,16 @@ export default function OrderSummary() {
             </div>
             <div className="border-b pb-4 mb-4">
                 <h2 className="text-lg font-semibold">Selected Seats</h2>
-                <p className="text-gray-800">{orderDetails.seats.join(", ")}</p>
+                <ul className="text-gray-800">
+                    {orderDetails.seats.map((seat, index) => (
+                        <li key={index} className="flex gap-2 py-2 ">
+                            <span>{seat}</span>
+                            <button className="bg-red-500 text-white px-2 py-1 rounded-md text-sm hover:bg-red-600">
+                                Delete
+                            </button>
+                        </li>
+                    ))}
+                </ul>
             </div>
             <div className="border-b pb-4 mb-4">
                 <h2 className="text-lg font-semibold">Payment Details</h2>
@@ -29,13 +38,18 @@ export default function OrderSummary() {
                 <p className="text-gray-800">Expiration: {orderDetails.payment.expiration}</p>
             </div>
             <div className="border-b pb-4 mb-4">
-                <h2 className="text-lg font-semibold">Total</h2>
-                <p className="text-gray-800">${orderDetails.total}</p>
+                <h2 className="text-lg font-semibold">Cost</h2>
+                <p>${orderDetails.ticketPrice} x {orderDetails.seats.length} Adult</p>
+                <p className="text-gray-800 font-bold">Total: ${orderDetails.seats.length * orderDetails.ticketPrice}</p>
             </div>
             <div className="flex gap-3 justify-center">
+                <button className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+                onClick={() => window.location.href = '/select-movie'}>
+                    Update Order
+                </button>
                 <button className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                onClick={() => window.location.href = '/order-confirmation'}>
-                    Confirm Order
+                onClick={() => window.location.href = '/checkout'}>
+                    Continue to Checkout
                 </button>
                 <button className="bg-gray-500 text-white px-10 py-2 rounded-md hover:bg-gray-600"
                 onClick={() => window.location.href = '/'}>
