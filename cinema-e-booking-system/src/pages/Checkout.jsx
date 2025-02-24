@@ -21,8 +21,11 @@ const Checkout = () => {
           className="w-full border rounded p-2"/>
       </div>
       <div className="flex gap-4 mt-4">
-        <button className="bg-green-500 text-white px-4 py-2 rounded">Confirm</button>
-        <button className="bg-gray-400 text-white px-4 py-2 rounded">Cancel</button>
+        <button className="bg-green-500 text-white px-4 py-2 rounded"
+        onClick={() => window.location.href = '/order-confirmation'}>
+        Confirm</button>
+        <button className="bg-gray-400 text-white px-4 py-2 rounded"
+        onClick={() => window.location.href = '/'}>Cancel</button>
       </div>
     </div>
   );
