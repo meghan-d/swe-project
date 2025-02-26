@@ -1,7 +1,6 @@
 import "./SeatSelection.css";
 import React, { useState } from "react";
 
-
 const SeatSelection = () => {
   const [selectedSeats, setSelectedSeats] = useState([]);
 
@@ -60,9 +59,20 @@ const SeatSelection = () => {
 
       {/* Selected Seats Summary */}
       <div className="mt-8 text-center">
-        <p className="font-medium">
-          Selected Seats: {selectedSeats.map(i => `${String.fromCharCode(65 + Math.floor(i/8))}${i % 8 + 1}`).join(', ')}
-        </p>
+        <p className="font-md mb-4">Selected Seats:</p> 
+        <div className="flex flex-col items-center">
+          {Object.entries(selectedSeats).map(([i, type]) => (
+            <div key={i} className="flex items-center gap-4 mb-2">
+              <span>
+                {String.fromCharCode(65 + Math.floor(i/8))}{i % 8 + 1}
+              </span>
+              <select className="p-1 border rounded">
+                <option value="Adult">Adult</option>
+                <option value="Child">Child (12 and under)</option>
+              </select>
+            </div>
+          ))}
+        </div>
         <button 
           onClick={() => window.location.href = '/order-summary'}
           className="mt-4 bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
