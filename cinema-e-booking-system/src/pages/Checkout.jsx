@@ -10,6 +10,10 @@ const Checkout = () => {
   return (
     <div className="max-w-md mx-auto p-6 bg-white shadow-md rounded-md">
       <h2 className="text-2xl font-semibold mb-4">Checkout</h2>
+      <div className="mb-2 flex items-center">
+        <label className="block text-gray-600 mr-4">Use Saved Card: </label>
+        <button className="bg-blue-500 text-white px-4 py-2 rounded">Visa 1234</button>
+      </div>
       <div className="mb-2">
         <label className="block text-gray-600">Card Number</label>
         <input type="text" name="cardNumber" value={payment.cardNumber} onChange={handleChange}
