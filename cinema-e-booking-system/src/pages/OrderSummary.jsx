@@ -43,11 +43,10 @@ export default function OrderSummary() {
                 <p className="text-gray-800 font-bold">Total: ${orderDetails.seats.length * orderDetails.ticketPrice}</p>
             </div>
             <div className="flex gap-3 justify-center">
-                <button className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
-                onClick={() => window.location.href = '/select-movie'}>
+                <button className="bg-blue-500 text-white px-4 py-2 rounded-md hover:blue-600">
                     Update Order
                 </button>
-                <button className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                <button className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
                 onClick={() => window.location.href = '/checkout'}>
                     Continue to Checkout
                 </button>
