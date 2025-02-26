@@ -15,12 +15,18 @@ const Checkout = () => {
         <input type="text" name="cardNumber" value={payment.cardNumber} onChange={handleChange}
           className="w-full border rounded p-2"/>
       </div>
-      <div className="mb-2">
+      <div className="mb-4">
         <label className="block text-gray-600">Expiry Date</label>
         <input type="text" name="expiry" value={payment.expiry} onChange={handleChange}
           className="w-full border rounded p-2"/>
       </div>
-      <div className="flex gap-4 mt-4">
+      <div className="mb-2 flex items-center">
+        <label className="block text-gray-600 mr-4">Promo Code: </label>
+        <input type="text" name="promotion" className="border rounded p-2 mr-4"/>
+        <button className="bg-blue-500 text-white px-4 py-2 rounded">Apply</button>
+      </div>
+      <h3 className="text-lg font-semibold">Total: $20</h3>
+      <div className=" flex gap-4 mt-4">
         <button className="bg-green-500 text-white px-4 py-2 rounded"
         onClick={() => window.location.href = '/order-confirmation'}>
         Confirm</button>
