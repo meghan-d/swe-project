@@ -6,8 +6,7 @@ export default function OrderSummary() {
         date: "March 1, 2025",
         time: "7:00 PM",
         seats: ["A3 (Adult)", "A4 (Adult)"],
-        ticketPrice: 10,
-        payment: { cardNumber: "**** **** **** 1234", expiration: "1/26" },
+        ticketPrice: 10
     };
 
     return (
@@ -31,11 +30,6 @@ export default function OrderSummary() {
                         </li>
                     ))}
                 </ul>
-            </div>
-            <div className="border-b pb-4 mb-4">
-                <h2 className="text-lg font-semibold">Payment Details</h2>
-                <p className="text-gray-800">Card Number: {orderDetails.payment.cardNumber}</p>
-                <p className="text-gray-800">Expiration: {orderDetails.payment.expiration}</p>
             </div>
             <div className="border-b pb-4 mb-4">
                 <h2 className="text-lg font-semibold">Cost</h2>
