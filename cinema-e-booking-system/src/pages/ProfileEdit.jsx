@@ -62,12 +62,12 @@ const ProfileEdit = () => {
   return (
     <div className="container">
       <h2 className="title">Edit Profile</h2>
-      <h3 className="text-xl">Enter any information you want to change.</h3>
+      <h3 className="title">Enter any information you want to change.</h3>
 
       {/* Success Message */}
       {successMessage && <div className="success-message">{successMessage}</div>}
 
-      <h3>Personal Information</h3>
+      <h3 className="text-lg text-yellow-400">Personal Information</h3>
       {/* Name Field */}
       <div className="form-group">
         <label className="label">Name</label>
@@ -95,7 +95,7 @@ const ProfileEdit = () => {
       </div>
       <button className="edit-button">Reset Password</button>
 
-      <h3>Payment Information and Billing Address</h3>
+      <h3 className="text-lg text-yellow-400 mt-6 mb-2">Payment Information and Billing Address</h3>
       <div className="two-column">
         <div className="card">Visa 1234</div>
         <button className="delete-button">Remove Card</button>
@@ -182,7 +182,7 @@ const ProfileEdit = () => {
       <button className="edit-button">Add Another Card</button>
       </div>
 
-      <h3>Home Address</h3>
+      <h3 className="text-lg text-yellow-400 mt-6 mb-2">Home Address</h3>
       {/* Address Field */}
       <div className="two-column">
       <div className="form-group">
