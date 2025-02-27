@@ -7,14 +7,14 @@ const LoginPage = () => {
     <div 
       className="login-container"
       style={{
-        backgroundImage: `url(${process.env.PUBLIC_URL + '/movie.jpg'})`,
+        backgroundColor: 'black',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         height: '100vh',
       }}
     >
+      <h2 className="registration-title">🎟️ VIP Login</h2>
       <div className="login-box">
-        <h1>Cinema E-Booking Login</h1>
         <form>
           <div className="input-group">
             <i><FaUser /></i>
@@ -33,11 +33,11 @@ const LoginPage = () => {
             <a href="#">Forgot Password</a>
           </div>
 
-          <button type="submit" className="login-button">Login</button>
-
-          <div className="signup">
-            <p>Sign Up</p>
+          <div className="buttons">
+            <button type="submit" className="login-button">Login</button>
+            <button className='signup-button'>Sign Up</button>
           </div>
+
         </form>
       </div>
     </div>

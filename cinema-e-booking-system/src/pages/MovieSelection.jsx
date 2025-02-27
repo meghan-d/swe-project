@@ -14,7 +14,8 @@ const MovieSelection = () => {
           <div key={movie.id} className="border p-4 rounded shadow">
             <h3 className="text-lg">{movie.title}</h3>
             <p className="text-sm text-gray-500">{movie.category}</p>
-            <button className="bg-blue-500 text-white px-3 py-1 mt-2 rounded">
+            <button className="bg-blue-500 text-white px-3 py-1 mt-2 rounded"
+            onClick={() => window.location.href = '/select-showtime'}>
               Book Movie
             </button>
           </div>

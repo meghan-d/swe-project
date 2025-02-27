@@ -13,6 +13,7 @@ import Registration from "./pages/Registration";
 import RegistrationConfirm from "./pages/RegistrationConfirm";
 import AdminPromotions from './pages/AdminPromotions';
 import AdminUsers from './pages/AdminUsers';
+import ShowtimeSelection from "./pages/ShowtimeSelection";
 
 
 const App = () => {
@@ -33,6 +34,7 @@ const App = () => {
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/admin-movies" element={<AdminMovies />} />
         <Route path="/admin-promotions" element={<AdminPromotions />} />
+        <Route path="/select-showtime" element={<ShowtimeSelection />} />
       </Routes>
     </Router>
   );

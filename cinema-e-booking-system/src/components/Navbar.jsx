@@ -76,6 +76,9 @@ export default function Navbar({ movies, setFilteredMovies }) {
           <a href="/">🎬 Cinema Booking</a>
         </div>
 
+        {/* Book Movie Button */}
+        <button className="book-button" onClick={() => navigate("/select-movie")}>Book a Movie</button>
+
         {/* Search Bar */}
         <div className="navbar-search">
           <input
