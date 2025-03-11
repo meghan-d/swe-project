@@ -14,6 +14,7 @@ import RegistrationConfirm from "./pages/RegistrationConfirm";
 import AdminPromotions from './pages/AdminPromotions';
 import AdminUsers from './pages/AdminUsers';
 import ShowtimeSelection from "./pages/ShowtimeSelection";
+import ResetPassword from "./pages/ResetPassword";
 
 
 const App = () => {
@@ -35,6 +36,7 @@ const App = () => {
         <Route path="/admin-movies" element={<AdminMovies />} />
         <Route path="/admin-promotions" element={<AdminPromotions />} />
         <Route path="/select-showtime" element={<ShowtimeSelection />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </Router>
   );

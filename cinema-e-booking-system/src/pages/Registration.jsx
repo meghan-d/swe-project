@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./Registration.css";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Registration = () => {
   const [formData, setFormData] = useState({
@@ -43,18 +44,27 @@ const Registration = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const saveUserToAdmin = (newUser) => {
-    const existingUsers = JSON.parse(localStorage.getItem("adminUsers")) || [];
-    localStorage.setItem("adminUsers", JSON.stringify([...existingUsers, newUser]));
+  const saveUserToAdmin = async (newUser) => {
+    //const existingUsers = JSON.parse(localStorage.getItem("adminUsers")) || [];
+    //localStorage.setItem("adminUsers", JSON.stringify([...existingUsers, newUser]));
+    try {
+      await axios.post("http://localhost:5000/registeredusers", newUser) // Send a POST request to your backend
+    } catch(error) {
+      console.error("Error saving user:", error);
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validate()) return;
-
-    const newUser = { name: formData.name, email: formData.email, role: "User" };
-    saveUserToAdmin(newUser); // Save user to admin list
     
+    const newUser = { name: formData.name, email: formData.email, password: formData.password,
+      phone: formData.phone, cardType: formData.cardType, cardNumber: formData.cardNumber,
+      expirationDate: formData.expirationDate, billingStreet: formData.billingStreet, billingCity: formData.billingCity,
+      billingState: formData.billingState, billingZip: formData.billingZip, addressStreet: formData.street,
+      addressCity: formData.city, addressState: formData.state, addressZip: formData.zip };
+    
+    saveUserToAdmin(newUser); // Save user to admin
     setIsSubmitting(true);
     setTimeout(() => {
         navigate("/registration-confirm");
@@ -67,25 +77,25 @@ const Registration = () => {
       <form onSubmit={handleSubmit} className="registration-form">
       <h3 className="section-title">Personal Information</h3>
         <div className="form-group">
-          <label className="label">Full Name</label>
+          <label className="label">Full Name *</label>
           <input type="text" name="name" value={formData.name} onChange={handleChange} className="input"/>
           {errors.name && <div className="error-message">{errors.name}</div>}
         </div>
 
         <div className="form-group">
-          <label className="label">Email Address</label>
+          <label className="label">Email Address *</label>
           <input type="email" name="email" value={formData.email} onChange={handleChange} className="input"/>
           {errors.email && <div className="error-message">{errors.email}</div>}
         </div>
 
         <div className="form-group">
-          <label className="label">Password</label>
+          <label className="label">Password *</label>
           <input type="password" name="password" value={formData.password} onChange={handleChange} className="input"/>
           {errors.password && <div className="error-message">{errors.password}</div>}
         </div>
 
         <div className="form-group">
-          <label className="label">Phone Number</label>
+          <label className="label">Phone Number *</label>
           <input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="input"/>
           {errors.phone && <div className="error-message">{errors.phone}</div>}
         </div>
@@ -149,7 +159,10 @@ const Registration = () => {
           <input type="text" name="zip" value={formData.billingZip} onChange={handleChange} className="input"/>
         </div>
         </div>
-
+        <div className = "checkbox">
+          <input type="checkbox" id="promotions" name="promotions" unchecked />
+          <label for="promotions"> Click here to register for promotional emails.</label>
+        </div>
         <button type="submit" className="button button-save" disabled={isSubmitting}>
           {isSubmitting ? "Registering..." : "Join Now"}
         </button>

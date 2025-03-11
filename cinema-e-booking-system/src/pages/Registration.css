@@ -135,3 +135,8 @@
     color: black;
     width: 150px;
 }
+.checkbox {
+    color: #FFD700;
+    font-weight: bold;
+    margin-top: 10px;
+}
