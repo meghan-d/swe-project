@@ -146,6 +146,7 @@ const transporter = nodemailer.createTransport({
     },
   });
   
+const verificationCodes = {}; // Store email -> code mappings
 
 
 // Fetch movies
@@ -189,7 +190,7 @@ app.post("/registeredusers", async (req, res) => {
 
         // Send email with verification code
         const mailOptions = {
-            from: "pranavisp2004@gmail.com", // 🔴 Replace with your email
+            from: "pranavisp2004@gmail.com", // Replace with your email
             to: email,
             subject: "Verify Your Account",
             text: `Your verification code is: ${verificationCode}`
@@ -260,6 +261,123 @@ app.post("/login", async (req, res) => {
     } catch (error) {
         console.error("Error fetching login info:", error);
         res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+// Route to Send Reset Code
+app.post("/send-reset-code", async (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(400).json({ error: "Email is required" });
+    }
+
+    const verificationCode = Math.floor(100000 + Math.random() * 900000); // Generate 6-digit code
+
+    // Store the code with the current timestamp
+    verificationCodes[email] = {
+        code: verificationCode,
+        timestamp: Date.now(), // Store the time the code was generated
+    };
+
+    console.log(`Verification code for ${email}: ${verificationCode}`); // Debugging
+
+    // Email Content
+    const mailOptions = {
+        from: "pranavisp2004@gmail.com", // Your email address
+        to: email,                    // Recipient email
+        subject: "Password Reset Verification Code",
+        text: `Your password reset verification code is: ${verificationCode}. This code is valid for 10 minutes.`,
+    };
+
+    // Send Email
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.error("Error sending email:", error);
+            return res.status(500).json({ error: "Error sending verification email" });
+        }
+        console.log("Email sent:", info.response);
+        res.json({ message: "Verification code sent to email" });
+    });
+});
+
+//Route to Verify the Code
+app.post("/verify-reset-code", (req, res) => {
+    const { email, verificationCode } = req.body;
+
+    // Check if email is valid and code exists
+    if (!email || !verificationCode) {
+        return res.status(400).json({ error: "Email and verification code are required" });
+    }
+
+    const storedCode = verificationCodes[email];
+
+    // Check if a verification code exists for the email
+    if (!storedCode) {
+        return res.status(400).json({ error: "Invalid verification code" });
+    }
+
+    // Check if the verification code has expired (10 minutes)
+    const currentTime = Date.now();
+    const timeDifference = currentTime - storedCode.timestamp;
+
+    if (timeDifference > 600000) {  // 10 minutes (10 * 60 * 1000 milliseconds)
+        delete verificationCodes[email];  // Remove the expired code
+        return res.status(400).json({ error: "Verification code has expired" });
+    }
+
+    // Check if the verification code matches
+    if (parseInt(verificationCode) === storedCode.code) {
+        return res.json({ message: "Verification successful. You can reset your password." });
+    } else {
+        return res.status(400).json({ error: "Invalid verification code" });
+    }
+});
+
+app.post("/reset-password", async (req, res) => {
+    const { email, verificationCode, newPassword } = req.body;
+
+    // Check if email, verification code, and new password are provided
+    if (!email || !verificationCode || !newPassword) {
+        return res.status(400).json({ error: "Email, verification code, and new password are required" });
+    }
+
+    const storedCode = verificationCodes[email];
+
+    // Check if a verification code exists for the email
+    if (!storedCode) {
+        return res.status(400).json({ error: "Invalid verification code" });
+    }
+
+    // Check if the verification code has expired (10 minutes)
+    const currentTime = Date.now();
+    const timeDifference = currentTime - storedCode.timestamp;
+
+    if (timeDifference > 600000) {  // 10 minutes (10 * 60 * 1000 milliseconds)
+        delete verificationCodes[email];  // Remove the expired code
+        return res.status(400).json({ error: "Verification code has expired" });
+    }
+
+    // Check if the verification code matches
+    if (parseInt(verificationCode) === storedCode.code) {
+        try {
+            // Hash the new password
+            const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+            // Update the password in the database
+            const updateQuery = "UPDATE registeredusers SET password = ? WHERE email = ?";
+            await db.execute(updateQuery, [hashedPassword, email]);
+
+            // Optionally, remove the code after successful reset
+            delete verificationCodes[email];
+
+            return res.json({ message: "Password reset successfully!" });
+        } catch (error) {
+            console.error("Error resetting password:", error);
+            return res.status(500).json({ error: "Failed to reset password" });
+        }
+    } else {
+        return res.status(400).json({ error: "Invalid verification code" });
     }
 });
 
