@@ -121,7 +121,7 @@ const connectDB = async () => {
         const db = await mysql.createConnection({
             host: "localhost",
             user: "root", // Update if your DB user is different
-            password: "Rajinara#12", // Update with your DB password
+            password: "Marmar3511@", // Update with your DB password
             database: "cinema_ebooking"
         });
         console.log("Connected to database");
