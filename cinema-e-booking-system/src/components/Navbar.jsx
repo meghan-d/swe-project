@@ -42,13 +42,28 @@
 //   );
 // }
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../components/Navbar.css"; // Import the CSS file
+import { ToastContainer, toast } from 'react-toastify';  
+import 'react-toastify/dist/ReactToastify.css'; 
 
 export default function Navbar({ movies, setFilteredMovies }) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false); 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const user = sessionStorage.getItem("user");
+    setIsLoggedIn(!!user);
+  }, []);
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("user");
+    setIsLoggedIn(false);
+    toast.success("Logout Successful!")
+    navigate("/");
+  };
 
   const handleChange = (e) => {
     const query = e.target.value.toLowerCase();
@@ -91,14 +106,38 @@ export default function Navbar({ movies, setFilteredMovies }) {
 
         {/* Buttons */}
         <div className="navbar-buttons">
-          <button className="navbar-btn" onClick={() => navigate("/register")}>
-            Sign Up
-          </button>
-          <button className="navbar-btn" onClick={() => navigate("/login")}>
-            Log In
-          </button>
+        {isLoggedIn ? (
+          <>
+            <button className="navbar-btn" onClick={() => navigate("/edit-profile")}>
+              Edit Profile
+            </button>
+            <button className="navbar-btn logout" onClick={handleLogout}>
+              Log Out
+            </button>
+            
+            </>
+          ) : (
+            <>
+            <button className="navbar-btn" onClick={() => navigate("/register")}>
+              Sign Up
+            </button>
+            <button className="navbar-btn" onClick={() => navigate("/login")}>
+              Log In
+            </button>
+            </>
+          )}
         </div>
       </div>
+      
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        theme="dark"
+        closeOnClick
+        pauseOnHover
+        draggable
+        pauseOnFocusLoss
+      />
     </nav>
   );
 }

@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bar } from "react-chartjs-2";
 import "chart.js/auto";
 import "./AdminDashboard.css";
+import { ToastContainer, toast } from 'react-toastify';  
+import 'react-toastify/dist/ReactToastify.css';
 
 const AdminDashboard = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
   // Sample data for ticket sales chart
@@ -19,6 +22,23 @@ const AdminDashboard = () => {
     ],
   };
 
+useEffect(() => {
+    const user = sessionStorage.getItem("user");
+    //setIsLoggedIn(!!user);
+    if (!user) {
+      navigate("/login"); // Automatically redirect to login if not logged in
+    } else {
+      setIsLoggedIn(true);
+    }
+  }, [navigate]);
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("user");
+    setIsLoggedIn(false);
+    navigate("/");
+    toast.success("Logout Successful!")
+  };
+ 
   return (
     <div className="admin-dashboard">
       {/* Sidebar */}
@@ -27,6 +47,12 @@ const AdminDashboard = () => {
         <button onClick={() => navigate("/admin-movies")}>Manage Movies</button>
         <button onClick={() => navigate("/admin-users")}>Manage Users</button>
         <button onClick={() => navigate("/admin-promotions")}>Manage Promotions</button>
+        {isLoggedIn ? (
+          <button className = "logoutbutton" onClick={handleLogout}>Logout</button>
+        ) : (
+          null
+        )
+        }
       </aside>
 
       {/* Main Content */}
@@ -87,6 +113,15 @@ const AdminDashboard = () => {
           </table>
         </div>
       </main>
+      <ToastContainer
+              position="top-left"
+              autoClose={3000}
+              theme="dark"
+              closeOnClick
+              pauseOnHover
+              draggable
+              pauseOnFocusLoss
+            />
     </div>
   );
 };
