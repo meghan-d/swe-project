@@ -140,3 +140,13 @@
     font-weight: bold;
     margin-top: 10px;
 }
+.remove-card-button {
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    margin-top: 5px;
+    background-color: rgb(223, 59, 59);
+    color: black;
+    width: 150px;
+}

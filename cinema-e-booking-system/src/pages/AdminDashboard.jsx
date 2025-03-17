@@ -35,8 +35,10 @@ useEffect(() => {
   const handleLogout = () => {
     sessionStorage.removeItem("user");
     setIsLoggedIn(false);
-    navigate("/");
-    toast.success("Logout Successful!")
+    setTimeout(() => {
+      navigate("/");
+    }, 2000);
+    toast.success("Logout Successful! Redirecting to the homepage...")
   };
  
   return (

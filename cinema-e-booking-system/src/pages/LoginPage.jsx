@@ -105,7 +105,7 @@ const LoginPage = () => {
         console.log("Response received:", res.data);
         if (res.data.Status === "Success") {
           sessionStorage.setItem("user", JSON.stringify(res.data.user))          
-          if (values.username.includes("@cebsadmin.com")) {
+          if (values.password.includes("cebsadmin")) {
             navigate("/admin-dashboard");
           } else {
             navigate("/");
