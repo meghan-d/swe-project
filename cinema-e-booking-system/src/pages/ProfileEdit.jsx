@@ -227,7 +227,13 @@ const handleSave = async () => {
         <button onClick={handleSave} className="button button-save" disabled={isSaving}>
           {isSaving ? "Saving..." : "Save"}
         </button>
-        <button className="button button-cancel">Cancel</button>
+        <button 
+          onClick={() => navigate("/")} 
+          className="button button-cancel"
+        >
+          Cancel
+        </button>
+
       </div>
     </div>
   );
