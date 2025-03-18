@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./ProfileEdit.css";
 
 const ProfileEdit = () => {
+  const navigate = useNavigate();
   const [profile, setProfile] = useState({
     name: "",
     email: "",
@@ -141,6 +143,8 @@ const handleSave = async () => {
 
     if (response.data.message) {
       setSuccessMessage("Profile updated successfully!");
+      setTimeout(() => navigate("/"), 2000); // Navigate after success
+
     } else {
       setErrorMessage("Failed to update profile.");
     }
