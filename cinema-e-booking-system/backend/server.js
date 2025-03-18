@@ -107,7 +107,6 @@ import mysql from "mysql2/promise";
 import cors from "cors";
 import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
-import crypto from 'crypto';
 
 const app = express();
 const PORT = 5000;
@@ -122,7 +121,7 @@ const connectDB = async () => {
         const db = await mysql.createConnection({
             host: "localhost",
             user: "root", // Update if your DB user is different
-            password: "Marmar3511@", // Update with your DB password
+            password: "Rajinara#12", // Update with your DB password
             database: "cinema_ebooking"
         });
         console.log("Connected to database");
@@ -139,9 +138,8 @@ const db = await connectDB();
 const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "marlym2882@gmail.com",
-      //pass: "mnwu nkse hnic kxps", // Use App Password generated for Gmail - Pranavi's password
-      pass: "eotd gwxz tpfn kbic", // Marly's Password
+      user: "pranavisp2004@gmail.com",
+      pass: "mnwu nkse hnic kxps", // Use App Password generated for Gmail
     },
     tls: {
       rejectUnauthorized: false, // Disable SSL certificate validation
@@ -163,7 +161,7 @@ app.get("/movies", async (req, res) => {
 });
 
 // Register User (with Email Verification)
-/*app.post("/register", async (req, res) => {
+app.post("/registeredusers", async (req, res) => {
     try {
         console.log("Received request body:", req.body);
 
@@ -181,7 +179,7 @@ app.get("/movies", async (req, res) => {
         const verificationCode = Math.floor(100000 + Math.random() * 900000);
 
         // Insert user with verification code (unverified initially)
-        const sql = `INSERT INTO users (name, email, password, phone, cardType, cardNumber, expirationDate, 
+        const sql = `INSERT INTO registeredusers (name, email, password, phone, cardType, cardNumber, expirationDate, 
             billingStreet, billingCity, billingState, billingZip, addressStreet, addressCity, addressState, addressZip, verificationCode, isVerified) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`;
 
@@ -193,114 +191,6 @@ app.get("/movies", async (req, res) => {
         // Send email with verification code
         const mailOptions = {
             from: "pranavisp2004@gmail.com", // Replace with your email
-            to: email,
-            subject: "Verify Your Account",
-            text: `Your verification code is: ${verificationCode}`
-        };
-
-        await transporter.sendMail(mailOptions);
-
-        res.json({ message: "User registered! Verification email sent." });
-    } catch (error) {
-        console.error("Error inserting user:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-});*/
-
-app.post("/register", async (req, res) => {
-    try {
-        console.log("Received request body:", req.body);
-
-        const { name, email, password, phone, cards,
-                addressStreet, addressCity, addressState, addressZip, promotions } = req.body;
-        
-        //checking if the email already has an account associated with it
-        const emailCheckQuery = "SELECT * FROM users WHERE email = ?";
-        const [existingEmail] = await db.execute(emailCheckQuery, [email]);
-        if (existingEmail.length > 0) {
-            // Email already exists in the database
-            return res.status(400).json({ message: "Email already registered, please login or use a different email address." });
-        }
-
-        //checking if the phone number already has an account associated with it
-        const phoneNumberCheckQuery = "SELECT * FROM users WHERE phone = ?"
-        const [existingPhone] = await db.execute (phoneNumberCheckQuery, [phone]);
-        if (existingPhone.length > 0) {
-            return res.status(400).json({ message: "Phone number already registered, please login or use a different phone number."});
-        }
-
-        // Convert expirationDate from 'YYYY-MM' to 'YYYY-MM-DD' format
-        //const formattedExpirationDate = expirationDate.length === 7 ? `${expirationDate}-01` : expirationDate;
-
-        // Hash password
-        const hashedPassword = await bcrypt.hash(password, 10);        
-
-        // Generate a 6-digit verification code
-        const verificationCode = Math.floor(100000 + Math.random() * 900000);
-
-        const status = 'Inactive'
-        //const userRole = (email.includes('@cebsadmin.com') && password.includes('cebsadmin')) ? 'Admin' : 'Customer' ;
-        const userRole = (password.includes('cebsadmin') ? 'Admin' : 'Customer');
-
-        // Insert user with verification code (unverified initially)
-        const userInsertQuery = `INSERT INTO users (name, email, password, phone, addressStreet, 
-                                 addressCity, addressState, addressZip, promotions, userRole, status, verificationCode) 
-                                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
-        const userValues = [name, email, hashedPassword, phone, addressStreet, addressCity, addressState, 
-                            addressZip, promotions ? 1 : 0, userRole, status, verificationCode];
-
-        // insert user into the db
-        const [userResult] = await db.execute(userInsertQuery, userValues);
-        const userId = userResult.insertId;
-        
-        //inserting cards into the db 
-        if (cards.length > 0) {
-            const cardInsertQuery = `INSERT INTO paymentcard (cardNumber, cardType, formatedExpirationDate, billingStreet, 
-                                     billingCity, billingState, billingZip, userId) 
-                                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-            for (let i = 0; i < cards.length; i++) {
-                // Individual cipher for each section
-                var cardNumberCipher = crypto.createCipheriv('aes-128-cbc', 'mycardinfo'.padEnd(16, '0'), crypto.randomBytes(16));
-                var cardTypeCipher = crypto.createCipheriv('aes-128-cbc', 'mycardinfo'.padEnd(16, '0'), crypto.randomBytes(16));
-                var billingStreetCipher = crypto.createCipheriv('aes-128-cbc', 'mycardinfo'.padEnd(16, '0'), crypto.randomBytes(16));
-                var billingCityCipher = crypto.createCipheriv('aes-128-cbc', 'mycardinfo'.padEnd(16, '0'), crypto.randomBytes(16));
-                var billingStateCipher = crypto.createCipheriv('aes-128-cbc', 'mycardinfo'.padEnd(16, '0'), crypto.randomBytes(16));
-                var billingZipCipher = crypto.createCipheriv('aes-128-cbc', 'mycardinfo'.padEnd(16, '0'), crypto.randomBytes(16));
-                var expirationDateCipher = crypto.createCipheriv('aes-128-cbc', 'mycardinfo'.padEnd(16, '0'), crypto.randomBytes(16));
-
-                const formattedExpirationDate = cards[i].expirationDate.length === 7 ? `${cards[i].expirationDate}-01` : cards[i].expirationDate;
-                
-                //hashing cardnumber
-                var hashedCardNumber = cardNumberCipher.update(cards[i].cardNumber, 'utf8', 'hex')
-                hashedCardNumber += cardNumberCipher.final('hex')
-                //hashing cardType
-                var hashedCardType = cardTypeCipher.update(cards[i].cardType, 'utf8', 'hex')
-                hashedCardType += cardTypeCipher.final('hex')
-                //hashing card expiration date
-                var hashedExpirationDate = expirationDateCipher.update(formattedExpirationDate, 'utf8', 'hex')
-                hashedExpirationDate += expirationDateCipher.final('hex')
-                //hashing billingStreet
-                var hashedBillingStreet = billingStreetCipher.update(cards[i].billingStreet, 'utf8', 'hex')
-                hashedBillingStreet += billingStreetCipher.final('hex')
-                //hashing billingCity
-                var hashedBillingCity = billingCityCipher.update(cards[i].billingCity, 'utf8', 'hex')
-                hashedBillingCity += billingCityCipher.final('hex')
-                //hashing billingState
-                var hashedBillingState = billingStateCipher.update(cards[i].billingState, 'utf8', 'hex')
-                hashedBillingState += billingStateCipher.final('hex')
-                //hashing billingZip
-                var hashedBillingZip = billingZipCipher.update(cards[i].billingZip, 'utf8', 'hex')
-                hashedBillingZip += billingZipCipher.final('hex')
-
-                const cardValues = [hashedCardNumber, hashedCardType, hashedExpirationDate, 
-                        hashedBillingStreet, hashedBillingCity, hashedBillingState, hashedBillingZip, userId];
-                await db.execute(cardInsertQuery, cardValues);
-            }
-        }
-        // Send email with verification code
-        const mailOptions = {
-            from: "marlym2882@gmail.com", // Replace with your email
             to: email,
             subject: "Verify Your Account",
             text: `Your verification code is: ${verificationCode}`
@@ -329,12 +219,12 @@ app.post('/verify-email', async (req, res) => {
       console.log(`Verifying email: ${email}, with code: ${verificationCode}`);
   
       // Query the database for the email and verification code
-      const query = "SELECT * FROM users WHERE email = ? AND verificationCode = ?";
+      const query = "SELECT * FROM registeredusers WHERE email = ? AND verificationCode = ?";
       const [rows] = await db.execute(query, [email, verificationCode]);
   
       if (rows.length > 0) {
         // If user found and verification code matches, update the user status to verified
-        const updateQuery = "UPDATE users SET status = 'Active' WHERE email = ?";
+        const updateQuery = "UPDATE registeredusers SET isVerified = true WHERE email = ?";
         await db.execute(updateQuery, [email]);
   
         res.json({ message: "Email verified successfully!" });
@@ -348,29 +238,56 @@ app.post('/verify-email', async (req, res) => {
   });
   
 // Login (Only if the user is verified)
+// app.post("/login", async (req, res) => {
+//     try {
+//         const { username, password } = req.body;
+        
+//         const [result] = await db.execute("SELECT * FROM registeredusers WHERE email = ?", [username]);
+
+//         if (result.length > 0) {
+//             if (result[0].isVerified === 0) {
+//                 return res.status(403).json({ error: "Email not verified. Please check your email." });
+//             }
+
+//             const isMatch = await bcrypt.compare(password.toString(), result[0].password);
+//             if (isMatch) {
+//                 return res.json({ Status: "Success" });
+//             } else {
+//                 return res.json({ Error: "Password does not match the email" });
+//             }
+//         } else {
+//             return res.json({ Error: "No email associated with an account" });
+//         }
+//     } catch (error) {
+//         console.error("Error fetching login info:", error);
+//         res.status(500).json({ error: "Internal Server Error" });
+//     }
+// });
+
+
 app.post("/login", async (req, res) => {
     try {
-        const { username, password } = req.body;
-        
-        const [result] = await db.execute("SELECT * FROM users WHERE email = ?", [username]);
+        const { email, password } = req.body;
 
-        if (result.length > 0) {
-            if (result[0].isVerified === 0) {
-                return res.status(403).json({ error: "Email not verified. Please check your email." });
-            }
+        const [result] = await db.execute("SELECT * FROM registeredusers WHERE email = ?", [email]);
 
-            const isMatch = await bcrypt.compare(password.toString(), result[0].password);
-            if (isMatch) {
-                return res.json({ Status: "Success" });
-            } else {
-                return res.json({ Error: "Password does not match the email" });
-            }
-        } else {
-            return res.json({ Error: "No email associated with an account" });
+        if (result.length === 0) {
+            return res.json({ Status: "Failure", error: "No email associated with an account" });
         }
+
+        if (result[0].isVerified === 0) {
+            return res.status(403).json({ Status: "Failure", error: "Email not verified. Please check your email." });
+        }
+
+        const isMatch = await bcrypt.compare(password.toString(), result[0].password);
+        if (!isMatch) {
+            return res.json({ Status: "Failure", error: "Incorrect password" });
+        }
+
+        return res.json({ Status: "Success", email: result[0].email });
     } catch (error) {
         console.error("Error fetching login info:", error);
-        res.status(500).json({ error: "Internal Server Error" });
+        res.status(500).json({ Status: "Failure", error: "Internal Server Error" });
     }
 });
 
@@ -475,7 +392,7 @@ app.post("/reset-password", async (req, res) => {
             const hashedPassword = await bcrypt.hash(newPassword, 10);
 
             // Update the password in the database
-            const updateQuery = "UPDATE users SET password = ? WHERE email = ?";
+            const updateQuery = "UPDATE registeredusers SET password = ? WHERE email = ?";
             await db.execute(updateQuery, [hashedPassword, email]);
 
             // Optionally, remove the code after successful reset
@@ -491,15 +408,113 @@ app.post("/reset-password", async (req, res) => {
     }
 });
 
-app.get("/users/:id", async (req, res) => {
-    const userId = req.params.id;
-    db.query("SELECT * FROM users WHERE id = ?", [userId], (err, result) => {
-    if (err) return res.status(500).send(err);
-        res.json(result[0]); 
-    });
-})
+// Update User Profile
+// app.put("/edit-profile", async (req, res) => {
+//     try {
+//         console.log("Update request received:", req.body); // Debugging log
+
+//         const { email, name, phone, cardType, cardNumber, expirationDate,
+//             billingStreet, billingCity, billingState, billingZip,
+//             addressStreet, addressCity, addressState, addressZip } = req.body;
+
+//         if (!email) {
+//             return res.status(400).json({ error: "Email is required to update profile" });
+//         }
+
+//         const formattedExpirationDate = expirationDate.length === 7 ? `${expirationDate}-01` : expirationDate;
+
+//         const updateQuery = `UPDATE registeredusers 
+//             SET name = ?, phone = ?, cardType = ?, cardNumber = ?, expirationDate = ?,
+//                 billingStreet = ?, billingCity = ?, billingState = ?, billingZip = ?,
+//                 addressStreet = ?, addressCity = ?, addressState = ?, addressZip = ?
+//             WHERE email = ?`;
+
+//         const values = [name, phone, cardType, cardNumber, formattedExpirationDate,
+//             billingStreet, billingCity, billingState, billingZip,
+//             addressStreet, addressCity, addressState, addressZip, email];
+
+//         const [result] = await db.execute(updateQuery, values);
+//         console.log("Database update result:", result); // Debugging log
+
+//         if (result.affectedRows > 0) {
+//             res.json({ message: "Profile updated successfully!" });
+//         } else {
+//             res.status(404).json({ error: "No user found with this email" });
+//         }
+//     } catch (error) {
+//         console.error("Error updating profile:", error);
+//         res.status(500).json({ error: "Internal Server Error" });
+//     }
+// });
+
+app.put("/edit-profile", async (req, res) => {
+    try {
+        console.log("Received update request with data:", req.body); // Debug log
+
+        const { email, name, phone, cardType, cardNumber, expirationDate,
+            billingStreet, billingCity, billingState, billingZip,
+            addressStreet, addressCity, addressState, addressZip } = req.body;
+
+        if (!email) {
+            console.error("Error: Email is missing in request");
+            return res.status(400).json({ error: "Email is required to update profile" });
+        }
+
+        const updateQuery = `UPDATE registeredusers 
+            SET name = ?, phone = ?, cardType = ?, cardNumber = ?, expirationDate = ?,
+                billingStreet = ?, billingCity = ?, billingState = ?, billingZip = ?,
+                addressStreet = ?, addressCity = ?, addressState = ?, addressZip = ?
+            WHERE email = ?`;
+
+        const values = [name, phone, cardType, cardNumber, expirationDate,
+            billingStreet, billingCity, billingState, billingZip,
+            addressStreet, addressCity, addressState, addressZip, email];
+
+        const [result] = await db.execute(updateQuery, values);
+        console.log("Database update result:", result);
+
+        if (result.affectedRows > 0) {
+            res.json({ message: "Profile updated successfully!" });
+        } else {
+            res.status(404).json({ error: "No user found with this email" });
+        }
+    } catch (error) {
+        console.error("Error updating profile:", error); // Log the full error object
+        return res.status(500).json({ error: "Internal Server Error", details: error.message });
+    }
+    
+});
+
+app.get("/api/profile", async (req, res) => {
+    try {
+        const { email } = req.query; // Get email from query params
+
+        if (!email) {
+            return res.status(400).json({ error: "Email is required" });
+        }
+
+        const query = `SELECT name, email, phone, cardType, cardNumber, expirationDate,
+                              billingStreet, billingCity, billingState, billingZip,
+                              addressStreet AS street, addressCity AS city, 
+                              addressState AS state, addressZip AS zip
+                       FROM registeredusers WHERE email = ?`;
+
+        const [rows] = await db.execute(query, [email]);
+
+        if (rows.length > 0) {
+            res.json(rows[0]); // Return the user's profile
+        } else {
+            res.status(404).json({ error: "User not found" });
+        }
+    } catch (error) {
+        console.error("Error fetching profile:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
 
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
+
+

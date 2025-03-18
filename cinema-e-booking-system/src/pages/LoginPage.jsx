@@ -93,7 +93,7 @@ import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const [values, setValues] = useState({
-    username: "",
+    email: "",  // Changed from username to email
     password: ""
   });
   const navigate = useNavigate();
@@ -104,14 +104,14 @@ const LoginPage = () => {
       .then((res) => {
         console.log("Response received:", res.data);
         if (res.data.Status === "Success") {
-          sessionStorage.setItem("user", JSON.stringify(res.data.user))          
-          if (values.password.includes("cebsadmin")) {
+          localStorage.setItem("email", values.email); // Store email correctly
+          if (values.email.includes("@cebsadmin.com")) {
             navigate("/admin-dashboard");
           } else {
             navigate("/");
-          }
+          }        
         } else {
-          alert("Incorrect email or password.");
+          alert(res.data.error || "Incorrect email or password.");
         }
       })
       .catch((err) => {
@@ -130,8 +130,8 @@ const LoginPage = () => {
             <input 
               type="text" 
               className="input-field" 
-              placeholder="Username" 
-              onChange={(e) => setValues(prevValues => ({ ...prevValues, username: e.target.value }))} 
+              placeholder="Email"  // Changed from Username to Email
+              onChange={(e) => setValues(prevValues => ({ ...prevValues, email: e.target.value }))} 
             />
           </div>
 
