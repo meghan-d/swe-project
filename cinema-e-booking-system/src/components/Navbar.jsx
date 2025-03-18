@@ -151,12 +151,12 @@ export default function Navbar({ movies, setFilteredMovies }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const user = localStorage.getItem("user");
+    const user = sessionStorage.getItem("user");
     setIsLoggedIn(!!user);
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
+    sessionStorage.removeItem("user");
     setIsLoggedIn(false);
     toast.success("Logout Successful!");
     navigate("/");
