@@ -138,3 +138,14 @@
   height: 40px;
   margin-top: 10px;
 }
+.checkbox {
+  color: #FFD700;
+  font-weight: bold;
+  margin-top: 30px;
+}
+
+.card-buttons {
+    display: inline-flex;
+    gap: 10px; 
+    align-items: center; 
+} 

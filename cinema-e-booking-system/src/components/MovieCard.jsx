@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-export default function MovieCard({ title, poster, trailer, allowToBook = true }) {
+export default function MovieCard({ id, title, poster, trailer, allowToBook = true }) {
     const [playTrailer, setPlayTrailer] = useState(false);
+    const navigate = useNavigate();
 
     return (
         <div className="bg-white shadow-2xl p-4 flex flex-col items-center rounded-md w-[200px]">
@@ -11,6 +13,7 @@ export default function MovieCard({ title, poster, trailer, allowToBook = true }
                 alt={title} 
                 className="w-full h-60 object-cover"
                 onError={(e) => e.target.src = "/default-poster.jpg"}  // ✅ Handle broken images
+                onClick={(e) => navigate(`/movie-details/${id}`)}
             />
 
             {/* Movie Title */}

@@ -5,9 +5,10 @@ export default function MovieList({ title, allowToBook, movies }) {
         <section className="mt-8 px-6">
             <h2 className="text-3xl mb-4">{title}</h2>
             <div className="flex gap-2.5 flex-wrap">
-                {movies.map((movie, index) => (
+                {movies.map((movie) => ( //movies.map((movie,index))
                     <MovieCard 
-                        key={index} 
+                        key={movie.id} //key = {index}
+                        id={movie.id}
                         title={movie.title} 
                         poster={movie.trailer_picture} // ✅ Use `trailer_picture`
                         trailer={movie.trailer_video}
