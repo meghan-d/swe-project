@@ -46,3 +46,4 @@ yarn-error.log*
 
 # Linting cache
 .eslintcache
+node_modules/
