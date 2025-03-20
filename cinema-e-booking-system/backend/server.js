@@ -58,50 +58,6 @@ app.get("/movies", async (req, res) => {
     }
 });
 
-// Register User (with Email Verification)
-/*app.post("/register", async (req, res) => {
-    try {
-        console.log("Received request body:", req.body);
-
-        const { name, email, password, phone, cardType, cardNumber, expirationDate,
-            billingStreet, billingCity, billingState, billingZip,
-            addressStreet, addressCity, addressState, addressZip } = req.body;
-
-        // Convert expirationDate from 'YYYY-MM' to 'YYYY-MM-DD' format
-        const formattedExpirationDate = expirationDate.length === 7 ? `${expirationDate}-01` : expirationDate;
-
-        // Hash password
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        // Generate a 6-digit verification code
-        const verificationCode = Math.floor(100000 + Math.random() * 900000);
-
-        // Insert user with verification code (unverified initially)
-        const sql = `INSERT INTO users (name, email, password, phone, cardType, cardNumber, expirationDate, 
-            billingStreet, billingCity, billingState, billingZip, addressStreet, addressCity, addressState, addressZip, verificationCode, isVerified) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`;
-
-        const values = [name, email, hashedPassword, phone, cardType, cardNumber, formattedExpirationDate, 
-            billingStreet, billingCity, billingState, billingZip, addressStreet, addressCity, addressState, addressZip, verificationCode];
-
-        await db.execute(sql, values);
-
-        // Send email with verification code
-        const mailOptions = {
-            from: "pranavisp2004@gmail.com", // Replace with your email
-            to: email,
-            subject: "Verify Your Account",
-            text: `Your verification code is: ${verificationCode}`
-        };
-
-        await transporter.sendMail(mailOptions);
-
-        res.json({ message: "User registered! Verification email sent." });
-    } catch (error) {
-        console.error("Error inserting user:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-});*/
 
 //constant iv 
 const ivBuffer = 'a1b2c3d4e5f67890extra'; 
@@ -244,32 +200,7 @@ app.post('/verify-email', async (req, res) => {
     }
   });
   
-// Login (Only if the user is verified)
-/*app.post("/login", async (req, res) => {
-    try {
-        const { username, password } = req.body;
-        
-        const [result] = await db.execute("SELECT * FROM users WHERE email = ?", [username]);
 
-        if (result.length > 0) {
-            if (result[0].isVerified === 0) {
-                return res.status(403).json({ error: "Email not verified. Please check your email." });
-            }
-
-            const isMatch = await bcrypt.compare(password.toString(), result[0].password);
-            if (isMatch) {
-                return res.json({ Status: "Success" });
-            } else {
-                return res.json({ Error: "Password does not match the email" });
-            }
-        } else {
-            return res.json({ Error: "No email associated with an account" });
-        }
-    } catch (error) {
-        console.error("Error fetching login info:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-});*/
 app.post("/login", async (req, res) => {
     try {
       const { username, password } = req.body;
@@ -498,6 +429,51 @@ app.get('/edit-profile', async (req, res) => {
     }
 });
 
+app.put('/edit-profile', async (req, res) => {
+    const userId = req.body.userId;
+    const { name, email, phone, street, city, state, zip, promotions, paymentCards } = req.body;
+
+    if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+    }
+
+    try {
+        // Update user details
+        await db.execute(
+            `UPDATE registeredusers 
+             SET name = ?, email = ?, phone = ?, addressStreet = ?, addressCity = ?, addressState = ?, addressZip = ? 
+             WHERE id = ?`,
+            [name, email, phone, street, city, state, zip, userId]
+        );
+        
+        // Update or insert payment card details
+        if (paymentCards && paymentCards.length > 0) {
+            for (const card of paymentCards) {
+                await db.execute(
+                    `INSERT INTO paymentcard (userID, cardType, cardNumber, formatedExpirationDate, billingStreet, billingCity, billingState, billingZip)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                     ON DUPLICATE KEY UPDATE cardType = VALUES(cardType), cardNumber = VALUES(cardNumber), formatedExpirationDate = VALUES(formatedExpirationDate), billingStreet = VALUES(billingStreet), billingCity = VALUES(billingCity), billingState = VALUES(billingState), billingZip = VALUES(billingZip)`,
+                    [
+                        userId,
+                        encryptValue(card.cardType),
+                        encryptValue(card.cardNumber),
+                        encryptValue(card.expirationDate),
+                        encryptValue(card.billingStreet),
+                        encryptValue(card.billingCity),
+                        encryptValue(card.billingState),
+                        encryptValue(card.billingZip)
+                    ]
+                );
+            }
+        }
+
+        return res.json({ message: "Profile updated successfully" });
+    } catch (error) {
+        console.error("Error updating profile:", error);
+        return res.status(500).json({ message: "Error updating profile" });
+    }
+});
+
 app.get("/movie-details/:id", async (req, res) => {
     const { id } = req.params;
 
@@ -514,6 +490,41 @@ app.get("/movie-details/:id", async (req, res) => {
         res.status(500).json({ error: "Database error" });
     }
 });
+
+app.post("/change-password", async (req, res) => {
+    const { userId, currentPassword, newPassword } = req.body;
+    //console.log(userId);
+
+    if (!userId || !currentPassword || !newPassword) {
+        return res.status(400).json({ message: "All fields are required" });
+    }
+
+    try {
+        const [userResult] = await db.execute("SELECT password FROM registeredusers WHERE id = ?", [userId]);
+        if (userResult.length === 0) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const storedHashedPassword = userResult[0].password;
+        console.log(storedHashedPassword);
+
+        const passwordMatch = await bcrypt.compare(currentPassword, storedHashedPassword);
+        if (!passwordMatch) {
+            return res.status(401).json({ message: "Incorrect current password" });
+        }
+
+        const saltRounds = 10;
+        const hashedNewPassword = await bcrypt.hash(newPassword, saltRounds);
+        await db.execute("UPDATE registeredusers SET password = ? WHERE id = ?", [hashedNewPassword, userId]);
+        
+        res.json({ message: "Password updated successfully!" });
+    } catch (error) {
+        console.error("Error updating password:", error);
+        res.status(500).json({ message: "Server error. Please try again later." });
+    }
+});
+
+
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);

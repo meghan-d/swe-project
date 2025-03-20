@@ -290,6 +290,12 @@ const ProfileEdit = () => {
     billingState: '',
     billingZip: '',
   });
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmNewPassword: "",
+  });
+
 
   // Fetch user data when the component mounts
   useEffect(() => {
@@ -389,13 +395,76 @@ const ProfileEdit = () => {
   };
   
 
-  const handleSave = () => {
+  // const handleSave = () => {
+  //   setIsSaving(true);
+  //   setTimeout(() => {
+  //     setIsSaving(false);
+  //     setSuccessMessage("Profile saved successfully!");
+  //   }, 2000);
+  // };
+
+
+  const handleSave = async () => {
     setIsSaving(true);
-    setTimeout(() => {
+    setSuccessMessage("");
+  
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    if (!user) {
+      setSuccessMessage("You need to log in to save your profile.");
       setIsSaving(false);
+      return;
+    }
+  
+    const updatedProfile = {
+      ...profile,
+      userId: user.id, // Ensure the backend knows which user to update
+      promotions: profile.promotions ? 1 : 0, // Convert boolean to integer if needed
+    };
+  
+    try {
+      const response = await axios.put("http://localhost:5000/edit-profile", updatedProfile);
+      
+      if (response.data.success) {
+        setSuccessMessage("Profile saved successfully!");
+      } else {
+        throw new Error("Failed to save profile. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error saving profile:", error);
       setSuccessMessage("Profile saved successfully!");
-    }, 2000);
+    }
+  
+    setIsSaving(false);
   };
+
+  const handleInputChange = (e) => {
+    setPasswordData({ ...passwordData, [e.target.name]: e.target.value });
+  };
+
+const handleChangePassword = async (e) => {
+    e.preventDefault();
+  
+  
+    const user = JSON.parse(sessionStorage.getItem('user')); // ✅ Get user info
+    if (!user || !user.id) {
+      alert("You must be logged in to change your password.");
+      return;
+    }
+    const userId = user.id; // ✅ Define userId before using it
+  
+    try {
+      const response = await axios.post("http://localhost:5000/change-password", {
+        userId,
+        currentPassword: passwordData.currentPassword,
+        newPassword: passwordData.newPassword,
+      });
+  
+      alert(response.data.message);
+    } catch (error) {
+      alert("Error changing password: " + error.response.data.message);
+    }
+  };
+  
 
   return (
     <div className="container">
@@ -420,6 +489,20 @@ const ProfileEdit = () => {
         <label className="label">Email</label>
         <input type="text" name="email" value={profile.email} onChange={handleChange} className="input disabled: opacity-50" disabled  />
       </div>
+
+      <h3 className="text-lg text-yellow-400 mt-6 mb-2">Change Password</h3>
+
+      <form onSubmit={handleChangePassword} className="form-group">
+        <label className="label">Current Password *</label>
+        <input type="password" name="currentPassword" required onChange={handleInputChange}  value={passwordData.currentPassword} className="input"/>
+        <label className="label">New Password *</label>
+        <input type="password" name="newPassword" required onChange={handleInputChange}  value={passwordData.newPassword} className="input"/>
+      </form>
+      <div className="button-group">
+          <button onClick={handleChangePassword} className="button button-save">Save Password</button>
+      </div>
+
+
 
       <h3 className="text-lg text-yellow-400 mt-6 mb-2">Payment Information and Billing Address</h3>
 
