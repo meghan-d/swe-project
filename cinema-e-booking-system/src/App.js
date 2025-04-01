@@ -15,6 +15,7 @@ import AdminPromotions from './pages/AdminPromotions';
 import AdminUsers from './pages/AdminUsers';
 import ShowtimeSelection from "./pages/ShowtimeSelection";
 import ResetPassword from "./pages/ResetPassword";
+import MovieDetail from "./pages/MovieDetail";
 import ForgotPassword from "./pages/ForgotPassword";  // Ensure this is correctly imported
 
 
@@ -30,6 +31,7 @@ const App = () => {
         <Route path="/select-movie" element={<MovieSelection />} />
         <Route path="/select-seats" element={<SeatSelection />} />
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/movie/:id" element={<MovieDetail />} />
         <Route path="/order-summary" element={<OrderSummary />} />
         <Route path="/order-confirmation" element={<OrderConfirmation />} />
         <Route path="/register" element={<Registration />} />
