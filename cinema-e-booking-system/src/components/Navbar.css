@@ -1,22 +1,27 @@
 /* Navbar Container */
 .navbar {
-    background-color: black;
-    border-bottom: 2px solid gold;
-    padding: 16px;
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    box-shadow: 0px 4px 10px rgba(255, 215, 0, 0.2);
-  }
-  
-  .navbar-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 16px;
-  }
+  background-color: black;
+  border-bottom: 2px solid gold;
+  padding: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0px 4px 10px rgba(255, 215, 0, 0.2);
+  width: 100vw;  /* Ensure it fully spans the screen */
+  display: flex;
+  justify-content: center;
+}
+
+/* Navbar Container - Make it full width */
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%; /* Force it to stretch */
+  max-width: 1600px; /* Adjust for larger screens */
+  padding: 0 32px;
+}
+
   
   /* Logo */
   .navbar-logo a {

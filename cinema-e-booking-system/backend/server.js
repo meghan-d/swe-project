@@ -6,7 +6,7 @@ import nodemailer from "nodemailer";
 import crypto from 'crypto';
 
 const app = express();
-const PORT = 5000;
+const PORT = 5001;
 
 // Enable CORS to allow frontend access
 app.use(cors());
@@ -18,7 +18,7 @@ const connectDB = async () => {
         const db = await mysql.createConnection({
             host: "localhost",
             user: "root", // Update if your DB user is different
-            password: "Rajinara#12", // Update with your DB password
+            password: "", // Update with your DB password..Marmar3511@
             database: "cinema_ebooking"
         });
         console.log("Connected to database");

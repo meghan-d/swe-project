@@ -80,7 +80,7 @@
 // export default LoginPage;
 
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./LoginPage.css";
 import { FaUser, FaLock } from "react-icons/fa";
 import axios from "axios";
@@ -88,36 +88,52 @@ import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const [values, setValues] = useState({
-    username: "",
-    password: ""
+    username: localStorage.getItem("rememberMeUser") || "",
+    password: "",
   });
+  const [error, setError] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    if (localStorage.getItem("rememberMeUser")) {
+      setRememberMe(true);
+    }
+  }, []);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    axios.post("http://localhost:5000/login", values)
-      .then((res) => {
-        console.log("Response received:", res.data);
-        if (res.data.Status === "Success") {
-          //sessionStorage.setItem("user", JSON.stringify(res.data.user))
-          if (res.data.user) {
-            console.log("User data:", res.data.user);
-            sessionStorage.setItem("user", JSON.stringify(res.data.user)); 
-            console.log("User stored:", JSON.parse(sessionStorage.getItem("user")));
-          }          
-          if (values.password.includes("cebsadmin")) {
-            navigate("/admin-dashboard");
-          } else {
-            navigate("/");
-          }
+    setError("");
+
+    if (!values.username || !values.password) {
+      setError("Username and password are required.");
+      return;
+    }
+
+    try {
+      const res = await axios.post("http://localhost:5000/login", values);
+
+      if (res.data.Status === "Success") {
+        sessionStorage.setItem("user", JSON.stringify(res.data.user));
+
+        if (rememberMe) {
+          localStorage.setItem("rememberMeUser", values.username);
         } else {
-          alert("Incorrect email or password.");
+          localStorage.removeItem("rememberMeUser");
         }
-      })
-      .catch((err) => {
-        console.error("Axios request failed:", err);
-        alert("Login request failed. Check the console for details.");
-      });
+
+        if (values.password.includes("cebsadmin")) {
+          navigate("/admin-dashboard");
+        } else {
+          navigate("/");
+        }
+      } else {
+        setError("Incorrect username or password.");
+      }
+    } catch (err) {
+      console.error("Axios request failed:", err);
+      setError("Login failed. Please try again later.");
+    }
   };
 
   return (
@@ -125,13 +141,16 @@ const LoginPage = () => {
       <h2 className="registration-title">🎟️ VIP Login</h2>
       <div className="login-box">
         <form onSubmit={handleSubmit}>
+          {error && <p className="error-message">{error}</p>}
+
           <div className="input-group">
             <i><FaUser /></i>
             <input 
               type="text" 
               className="input-field" 
               placeholder="Username" 
-              onChange={(e) => setValues(prevValues => ({ ...prevValues, username: e.target.value }))} 
+              value={values.username}
+              onChange={(e) => setValues(prev => ({ ...prev, username: e.target.value }))} 
             />
           </div>
 
@@ -141,21 +160,34 @@ const LoginPage = () => {
               type="password" 
               className="input-field" 
               placeholder="Password" 
-              onChange={(e) => setValues(prevValues => ({ ...prevValues, password: e.target.value }))} 
+              value={values.password}
+              onChange={(e) => setValues(prev => ({ ...prev, password: e.target.value }))} 
             />
           </div>
 
           <div className="options">
             <label>
-              <input type="checkbox" /> Remember Me
+              <input 
+                type="checkbox" 
+                checked={rememberMe}
+                onChange={() => setRememberMe(!rememberMe)}
+              /> Remember Me
             </label>
-            <button type="button" className="forgot-password-link" onClick={() => navigate("/forgot-password")}>
+            <button 
+              type="button" 
+              className="forgot-password-link" 
+              onClick={() => navigate("/forgot-password")}
+            >
               Forgot Password?
             </button>
           </div>
 
           <div className="buttons">
             <button type="submit" className="login-button">Login</button>
+          </div>
+
+          <div className="signup-option">
+            <p>Don't have an account? <span onClick={() => navigate("/register")}>Sign Up</span></p>
           </div>
 
         </form>
@@ -165,3 +197,4 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
+
