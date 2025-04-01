@@ -1,0 +1,43 @@
+.movie-container {
+    padding: 1.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  
+  .movie-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  
+  .movie-category {
+    font-size: 0.875rem;
+    color: #6b7280; /* Tailwind gray-500 */
+    margin-bottom: 1rem;
+  }
+  
+  .movie-poster {
+    width: 100%;
+    max-width: 600px;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    margin-bottom: 1.5rem;
+  }
+  
+  .movie-info p {
+    margin-bottom: 0.5rem;
+  }
+  
+  .review-list {
+    list-style-type: disc;
+    margin-left: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .movie-trailer {
+    width: 100%;
+    max-width: 800px;
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+  }
+  
