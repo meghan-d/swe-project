@@ -18,7 +18,7 @@ const connectDB = async () => {
         const db = await mysql.createConnection({
             host: "localhost",
             user: "root", // Update if your DB user is different
-            password: "urmomspicklejar", // Update with your DB password..Marmar3511@
+            password: "", // Update with your DB password..Marmar3511@
             database: "cinema_ebooking"
         });
         console.log("Connected to database");
@@ -477,20 +477,37 @@ app.put('/edit-profile', async (req, res) => {
 
 app.get("/movie-details/:id", async (req, res) => {
     const { id } = req.params;
-
+  
     try {
-        const [movies] = await db.execute("SELECT * FROM movies WHERE id = ?", [id]);
-
-        if (movies.length === 0) {
-            return res.status(404).json({ error: "Movie not found" });
-        }
-        
-        res.json(movies[0]); // ✅ Send only the first movie
+      const [movies] = await db.execute("SELECT * FROM movies WHERE id = ?", [id]);
+  
+      if (movies.length === 0) {
+        return res.status(404).json({ error: "Movie not found" });
+      }
+  
+      const movie = movies[0];
+  
+      // Parse showtimes
+      try {
+        movie.showtimes = JSON.parse(movie.showtimes || "[]");
+      } catch {
+        movie.showtimes = [];
+      }
+  
+      // Parse reviews
+      try {
+        movie.reviews = JSON.parse(movie.reviews || "[]");
+      } catch {
+        movie.reviews = [];
+      }
+  
+      res.json(movie);
     } catch (error) {
-        console.error("Error fetching movie:", error);
-        res.status(500).json({ error: "Database error" });
+      console.error("Error fetching movie:", error);
+      res.status(500).json({ error: "Database error" });
     }
-});
+  });
+  
 
 app.post("/change-password", async (req, res) => {
     const { userId, currentPassword, newPassword } = req.body;

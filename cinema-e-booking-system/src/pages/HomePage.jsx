@@ -55,7 +55,7 @@ const HomePage = () => {
 
   const fetchMovies = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/movies"); // Fetch movies from backend
+      const res = await axios.get("http://localhost:5001/movies"); // Fetch movies from backend
       setMovies(res.data);
       setFilteredMovies(res.data); // Initially, show all movies
     } catch (error) {

@@ -47,7 +47,7 @@ const MovieDetails = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/movie-details/${id}`)
+      .get(`http://localhost:5001/movie-details/${id}`)
       .then((response) => {
         setMovie(response.data);
       })
@@ -57,7 +57,6 @@ const MovieDetails = () => {
   }, [id]);
 
   if (!movie) return <p className="p-6">Loading...</p>;
-
   return (
     <div className="p-6 space-y-4 max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold">{movie.title}</h1>
@@ -75,7 +74,13 @@ const MovieDetails = () => {
         <p><strong>Cast:</strong> {movie.cast}</p>
         <p><strong>Rating:</strong> {movie.rating}</p>
         <p><strong>Synopsis:</strong> {movie.synopsis}</p>
-        <p><strong>Showtimes:</strong> {movie.showtimes?.join(", ") || "N/A"}</p>
+        <p><strong>Showtimes:</strong> 
+          {Array.isArray(movie.showtimes)
+            ? movie.showtimes.join(", ")
+            : typeof movie.showtimes === "string"
+              ? JSON.parse(movie.showtimes).join(", ")
+              : "N/A"}
+        </p>
       </div>
 
       {movie.reviews?.length > 0 && (
