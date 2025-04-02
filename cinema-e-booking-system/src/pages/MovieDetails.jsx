@@ -33,13 +33,10 @@
 // };
 
 // export default MovieDetails;
-
-
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import './MovieDetails.css';
-
+import "./MovieDetails.css";
 
 const MovieDetails = () => {
   const { id } = useParams();
@@ -48,74 +45,95 @@ const MovieDetails = () => {
   useEffect(() => {
     axios
       .get(`http://localhost:5001/movie-details/${id}`)
-      .then((response) => {
-        setMovie(response.data);
+      .then((res) => {
+        setMovie(res.data);
       })
-      .catch((error) => {
-        console.error("Error fetching movie details:", error);
+      .catch((err) => {
+        console.error("Error fetching movie details:", err);
       });
   }, [id]);
 
-  if (!movie) return <p className="p-6">Loading...</p>;
+  if (!movie) return <p className="loading-text">Loading...</p>;
+
+  const showtimes = Array.isArray(movie.showtimes)
+    ? movie.showtimes
+    : typeof movie.showtimes === "string"
+    ? JSON.parse(movie.showtimes)
+    : [];
+
+  const reviews = Array.isArray(movie.reviews)
+    ? movie.reviews
+    : typeof movie.reviews === "string"
+    ? JSON.parse(movie.reviews)
+    : [];
+
   return (
-    <div className="p-6 space-y-4 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold">{movie.title}</h1>
-      <p className="text-sm text-gray-500">{movie.category}</p>
+    <div className="movie-card">
+      <div className="movie-details-container">
+        <div className="left-column">
+          <h1 className="movie-title">{movie.title}</h1>
+          <div className="movie-poster-wrapper">
+            <img
+              src={movie.trailer_picture || "/default-poster.jpg"}
+              alt={movie.title}
+              className="movie-poster"
+            />
+          </div>
+        </div>
 
-      <img
-        src={movie.trailer_picture || "/default-poster.jpg"}
-        alt={movie.title}
-        className="rounded shadow-md w-full max-w-2xl"
-      />
+        <div className="right-column">
+          <p className="movie-category">{movie.category}</p>
+          <div className="movie-info">
+            <p><strong>Director:</strong> {movie.director}</p>
+            <p><strong>Producer:</strong> {movie.producer}</p>
+            <p><strong>Cast:</strong> {movie.cast}</p>
+            <p><strong>Rating:</strong> {movie.rating}</p>
+            <p><strong>Synopsis:</strong> {movie.synopsis}</p>
+            <p><strong>Showtimes:</strong> {showtimes.join(", ") || "N/A"}</p>
 
-      <div className="space-y-2">
-        <p><strong>Director:</strong> {movie.director}</p>
-        <p><strong>Producer:</strong> {movie.producer}</p>
-        <p><strong>Cast:</strong> {movie.cast}</p>
-        <p><strong>Rating:</strong> {movie.rating}</p>
-        <p><strong>Synopsis:</strong> {movie.synopsis}</p>
-        <p><strong>Showtimes:</strong> 
-          {Array.isArray(movie.showtimes)
-            ? movie.showtimes.join(", ")
-            : typeof movie.showtimes === "string"
-              ? JSON.parse(movie.showtimes).join(", ")
-              : "N/A"}
-        </p>
+          </div>
+
+          {movie.trailer_video && (
+            movie.trailer_video.includes("youtube") ? (
+              <iframe
+                src={movie.trailer_video}
+                title="Trailer"
+                className="movie-trailer"
+                allowFullScreen
+              />
+            ) : (
+              <video
+                className="movie-trailer"
+                controls
+                src={movie.trailer_video}
+              />
+            )
+          )}
+
+          <div className="reviews-container">
+            {reviews.length > 0 && (
+                <>
+                  <p><strong>Reviews:</strong></p>
+                  <ul className="reviews-list">
+                    {reviews.map((review, i) => (
+                      <li key={i}>"{review}"</li>
+                  ))}
+                </ul>
+              </>
+            )}  
+          </div>
+        </div>
       </div>
-
-      {movie.reviews?.length > 0 && (
-        <>
-          <p className="font-semibold">Reviews:</p>
-          <ul className="list-disc ml-6">
-            {movie.reviews.map((review, idx) => (
-              <li key={idx}>{review}</li>
-            ))}
-          </ul>
-        </>
-      )}
-
-      {movie.trailer_video && (
-        movie.trailer_video.includes("youtube")
-          ? (
-            <iframe
-              src={movie.trailer_video}
-              title="Trailer"
-              className="w-full aspect-video mt-4 rounded"
-              allowFullScreen
-            />
-          ) : (
-            <video
-              className="w-full max-w-3xl rounded mt-4"
-              controls
-              src={movie.trailer_video}
-            />
-          )
-      )}
     </div>
   );
 };
 
 export default MovieDetails;
+
+
+
+
+
 
 // const MovieDetails = () => {
 //     // Hardcoded sample movie
