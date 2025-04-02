@@ -18,7 +18,7 @@ const connectDB = async () => {
         const db = await mysql.createConnection({
             host: "localhost",
             user: "root", // Update if your DB user is different
-            password: "", // Update with your DB password..Marmar3511@
+            password: "Rajinara#12", // Update with your DB password..Marmar3511@
             database: "cinema_ebooking"
         });
         console.log("Connected to database");
@@ -35,9 +35,9 @@ const db = await connectDB();
 const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "marlym2882@gmail.com",
+      user: "pranavisp2004@gmail.com",
       //pass: "mnwu nkse hnic kxps", // Use App Password generated for Gmail - Pranavi's password
-      pass: "eotd gwxz tpfn kbic", // Marly's Password
+      pass: "mnwu nkse hnic kxps", // Marly's Password
     },
     tls: {
       rejectUnauthorized: false, // Disable SSL certificate validation
@@ -167,6 +167,7 @@ app.post("/register", async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
+
 
 // Verify Email (User enters the code received)
 app.post('/verify-email', async (req, res) => {
@@ -524,6 +525,49 @@ app.post("/change-password", async (req, res) => {
     }
 });
 
+app.post("/addPromotion", async (req, res) => {
+    try {
+      const { promotionName, promotionStatus } = req.body;
+  
+      // Insert promotion into the database
+      const promotionInsertQuery = `INSERT INTO promotions (name, status) VALUES (?, ?)`;
+      await db.execute(promotionInsertQuery, [promotionName, promotionStatus]);
+  
+      // Fetch users who have opted in for promotions (where promotions = 1)
+      const usersQuery = "SELECT email FROM registeredusers WHERE promotions = 1";
+      const [users] = await db.execute(usersQuery);
+  
+      // Send email to all users who opted in for promotions
+      const mailOptions = {
+        from: "pranavisp2004@gmail.com",
+        subject: `New Promotion: ${promotionName}`,
+      };
+  
+      users.forEach((user) => {
+        mailOptions.to = user.email;
+        mailOptions.text = `Hello! We have a new promotion for you: ${promotionName} - Status: ${promotionStatus}`;
+  
+        // Send the email to each user
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            console.error("Error sending email:", error);
+          } else {
+            console.log("Email sent:", info.response);
+          }
+        });
+      });
+  
+      res.json({ message: "Promotion added and emails sent!" });
+    } catch (error) {
+      console.error("Error adding promotion:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+  
+  
+  app.listen(5000, () => {
+    console.log("Server running on port 5000");
+  });
 
 // Start the server
 app.listen(PORT, () => {
