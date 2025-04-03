@@ -67,8 +67,10 @@ const SeatSelection = () => {
                 {String.fromCharCode(65 + Math.floor(i/8))}{i % 8 + 1}
               </span>
               <select className="p-1 border rounded">
-                <option value="Adult">Adult</option>
-                <option value="Child">Child (12 and under)</option>
+                <option value="Adult">Adult - $10</option>
+                <option value="Senior">Senior (60+) - $8</option>
+                <option value="Military">Military - $8</option>
+                <option value="Child">Child (12 and under) - $7</option>
               </select>
             </div>
           ))}
