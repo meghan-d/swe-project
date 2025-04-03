@@ -13,7 +13,7 @@ export default function MovieCard({ id, title, poster, trailer, allowToBook = tr
                 alt={title} 
                 className="w-full h-60 object-cover"
                 onError={(e) => e.target.src = "/default-poster.jpg"}  // ✅ Handle broken images
-                onClick={(e) => navigate(`/movie-details/${id}`)}
+                onClick={(e) => navigate(`/movie/${id}`)}
             />
 
             {/* Movie Title */}
