@@ -1,0 +1,125 @@
+/* Background & Page Styling */
+.schedulemovies-container {
+    background-color: #121212; /* Dark luxury background */
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Enlarged Registration Card */
+.movies-form {
+    max-width: 550px;  /* Increased width */
+    width: 90%;  /* Responsive for smaller screens */
+    background: #222222;
+    padding: 50px;  
+    border-radius: 12px;
+    box-shadow: 0px 6px 15px rgba(255, 215, 0, 0.4);
+    text-align: center;
+}
+
+/* Title */
+.title {
+    font-size: 28px;
+    color: #FFD700; /* Gold Title */
+    font-family: "Playfair Display", serif;
+    margin-bottom: 25px;
+}
+/* Form Styling */
+.form-group {
+    margin-bottom: 10px; 
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+/* Labels */
+.label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 300;
+    color: #FFD700; /* Gold Label Text */
+}
+
+/* Smaller Input Fields */
+.input {
+    width: 100%; 
+    padding: 10px;
+    border: 2px solid #FFD700; /* Gold Border */
+    border-radius: 8px;
+    font-size: 16px;
+    background: #333333;
+    color: white;
+    transition: all 0.3s ease-in-out;
+}
+
+.input:focus {
+    outline: none;
+    border-color: white;
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+}
+
+.two-column {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    width: 100%; 
+    gap: 10px; 
+}
+
+.two-column .form-group {
+    width: 48%; 
+}
+
+/* Error Message */
+.error-message {
+    color: #dc3545;
+    font-size: 15px;
+    margin-top: 5px;
+}
+
+/* Button Styling */
+.button {
+    padding: 14px 28px;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    margin-top: 20px;
+}
+.button-review {
+    background-color: #FFD700;
+    padding: 12px 20px;
+    color: black;
+
+}
+/* Gold CTA Button */
+.button-save {
+    background-color: #FFD700;
+    color: black;
+    font-weight: bold;
+}
+
+.button-save:hover {
+    background-color: white;
+    color: black;
+}
+.button-cancel {
+    background-color: #f8f9fa;
+    color: #333333;
+    border: 1px solid #dddddd;
+}
+  
+.button-cancel:hover {
+    background-color: #e9ecef;
+}
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 30px;
+}

@@ -1,0 +1,133 @@
+/* Page Wrapper */
+.movie-card {
+  background-color: #1a1a1a;
+  padding: 40px;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Card-style layout */
+.movie-details-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  background: #2a2a2a;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(255, 215, 0, 0.15);
+  padding: 30px;
+  max-width: 1100px;
+  width: 100%;
+  color: white;
+  box-sizing: border-box;
+}
+.screenings-container {
+  border-radius: 10px;
+  box-shadow: 0 6px 15px rgba(255, 215, 0, 0.3);
+  padding: 10px;
+  padding-top: 0px;
+}
+.screenings-row {
+  flex: 1 1 100%;
+  color: #FFD700;
+  border-top: 2px solid #ffc107;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  background-color: #2a2a2a;
+  padding: 1rem;
+}
+/* Left Column - Poster */
+.left-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.movie-title {
+  font-size: 36px;
+  color: #FFD700;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.movie-poster-wrapper {
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 2 / 3;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 15px rgba(255, 215, 0, 0.3);
+}
+
+.movie-poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Right Column - Details */
+.right-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.movie-category {
+  font-size: 20px;
+  color: #aaa;
+  margin-bottom: 10px;
+}
+
+.movie-info p {
+  line-height: 1.5;
+  margin: 6px 0;
+}
+
+.reviews-list {
+  margin-left: 20px;
+  margin-top: 8px;
+  list-style-type: none;
+  font-size: 10px;
+  color: #FFD700;
+}
+
+.reviews-container {
+  border-radius: 10px;
+  box-shadow: 0 6px 15px rgba(255, 215, 0, 0.3);
+  padding: 10px;
+  padding-top: 0px;
+}
+
+/* Trailer */
+.movie-trailer {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  border: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .movie-details-container {
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  .left-column,
+  .right-column {
+     width: 100%;
+  }
+  .movie-poster-wrapper {
+    max-width: 80%;
+  }
+}
+
+.top-right-column {
+  display: flex;
+  justify-content: space-between;
+}

@@ -18,7 +18,7 @@ const connectDB = async () => {
         const db = await mysql.createConnection({
             host: "localhost",
             user: "root", // Update if your DB user is different
-            password: "Rajinara#12", // Update with your DB password
+            password: "Marmar3511@", // Update with your DB password
             database: "cinema_ebooking"
         });
         console.log("Connected to database");
@@ -115,7 +115,7 @@ app.post("/register", async (req, res) => {
                 addressStreet, addressCity, addressState, addressZip, promotions } = req.body;
         
         //checking if the email already has an account associated with it
-        const emailCheckQuery = "SELECT * FROM registeredusers WHERE email = ?";
+        const emailCheckQuery = "SELECT * FROM users WHERE email = ?";
         const [existingEmail] = await db.execute(emailCheckQuery, [email]);
         if (existingEmail.length > 0) {
             // Email already exists in the database
@@ -123,7 +123,7 @@ app.post("/register", async (req, res) => {
         }
 
         //checking if the phone number already has an account associated with it
-        const phoneNumberCheckQuery = "SELECT * FROM registeredusers WHERE phone = ?"
+        const phoneNumberCheckQuery = "SELECT * FROM users WHERE phone = ?"
         const [existingPhone] = await db.execute (phoneNumberCheckQuery, [phone]);
         if (existingPhone.length > 0) {
             return res.status(400).json({ message: "Phone number already registered, please login or use a different phone number."});
@@ -140,7 +140,7 @@ app.post("/register", async (req, res) => {
         const userRole = (password.includes('cebsadmin') ? 'Admin' : 'Customer');
 
         // Insert user with verification code (unverified initially)
-        const userInsertQuery = `INSERT INTO registeredusers (name, email, password, phone, addressStreet, 
+        const userInsertQuery = `INSERT INTO users (name, email, password, phone, addressStreet, 
                                  addressCity, addressState, addressZip, promotions, userRole, status, verificationCode) 
                                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
@@ -157,6 +157,7 @@ app.post("/register", async (req, res) => {
                                      billingCity, billingState, billingZip, userId) 
                                      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
             for (let i = 0; i < cards.length; i++) {
+                if (!cards[i].cardNumber.trim()) continue;
                 // Individual cipher for each section
                 var cardNumberCipher = crypto.createCipheriv('aes-128-cbc', 'mycardinfo'.padEnd(16, '0'), iv);
                 var cardTypeCipher = crypto.createCipheriv('aes-128-cbc', 'mycardinfo'.padEnd(16, '0'), iv);
@@ -194,6 +195,7 @@ app.post("/register", async (req, res) => {
                         hashedBillingStreet, hashedBillingCity, hashedBillingState, hashedBillingZip, userId];
                 await db.execute(cardInsertQuery, cardValues);
             }
+        
         }
         // Send email with verification code
         const mailOptions = {
@@ -226,12 +228,12 @@ app.post('/verify-email', async (req, res) => {
       console.log(`Verifying email: ${email}, with code: ${verificationCode}`);
   
       // Query the database for the email and verification code
-      const query = "SELECT * FROM registeredusers WHERE email = ? AND verificationCode = ?";
+      const query = "SELECT * FROM users WHERE email = ? AND verificationCode = ?";
       const [rows] = await db.execute(query, [email, verificationCode]);
   
       if (rows.length > 0) {
         // If user found and verification code matches, update the user status to verified
-        const updateQuery = "UPDATE registeredusers SET status = 'Active' WHERE email = ?";
+        const updateQuery = "UPDATE users SET status = 'Active' WHERE email = ?";
         await db.execute(updateQuery, [email]);
   
         res.json({ message: "Email verified successfully!" });
@@ -275,7 +277,7 @@ app.post("/login", async (req, res) => {
       const { username, password } = req.body;
       
       // Query the database for the user by email (username)
-      const [result] = await db.execute("SELECT * FROM registeredusers WHERE email = ?", [username]);
+      const [result] = await db.execute("SELECT * FROM users WHERE email = ?", [username]);
   
       if (result.length > 0) {
         if (result[0].isVerified === 0) {
@@ -457,7 +459,7 @@ app.get('/edit-profile', async (req, res) => {
 
     try {
         // Query the database for the user data
-        const [userResults] = await db.execute('SELECT * FROM registeredusers WHERE id = ?', [userId]);
+        const [userResults] = await db.execute('SELECT * FROM users WHERE id = ?', [userId]);
 
         if (userResults.length > 0) {
             // Query the database for the payment cards associated with the user
@@ -511,6 +513,422 @@ app.get("/movie-details/:id", async (req, res) => {
         res.json(movies[0]); // ✅ Send only the first movie
     } catch (error) {
         console.error("Error fetching movie:", error);
+        res.status(500).json({ error: "Database error" });
+    }
+});
+
+app.post("/change-password", async (req, res) => {
+    const { userId, currentPassword, newPassword } = req.body;
+    //console.log(userId);
+
+    if (!userId || !currentPassword || !newPassword) {
+        return res.status(400).json({ message: "All fields are required" });
+    }
+
+    try {
+        const [userResult] = await db.execute("SELECT password FROM users WHERE id = ?", [userId]);
+        if (userResult.length === 0) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const storedHashedPassword = userResult[0].password;
+        console.log(storedHashedPassword);
+
+        const passwordMatch = await bcrypt.compare(currentPassword, storedHashedPassword);
+        if (!passwordMatch) {
+            return res.status(401).json({ message: "Incorrect current password" });
+        }
+
+        const saltRounds = 10;
+        const hashedNewPassword = await bcrypt.hash(newPassword, saltRounds);
+        await db.execute("UPDATE users SET password = ? WHERE id = ?", [hashedNewPassword, userId]);
+        
+        res.json({ message: "Password updated successfully!" });
+    } catch (error) {
+        console.error("Error updating password:", error);
+        res.status(500).json({ message: "Server error. Please try again later." });
+    }
+});
+
+//edit profile - update profile attributes
+app.post("/update-profile", async (req, res) => {
+    const { userId, name, phone, street, city, state, zip, promotions } = req.body;
+
+    if (!name || !phone || !userId) {
+        return res.status(400).json({ message: "Phone and email are required" });
+    }
+    try {
+        const updateQuery = `UPDATE users SET name = ?, phone = ?, addressStreet = ?, addressCity = ?, addressState = ?, addressZip = ?, promotions = ? WHERE id = ?`;
+        await db.execute(updateQuery, [name, phone, street, city, state, zip, promotions, userId]);
+
+        res.json({ message: "Profile updated successfully" });
+    } catch (error) {
+        console.error("Error updating profile:", error);
+        res.status(500).json({ message: "Failed to update profile" });
+    }
+});
+
+//edit profile - add a new card
+app.post("/add-new-card", async (req, res) => {
+    const { userId, cardType, cardNumber, expirationDate, billingStreet, billingCity, billingState, billingZip } = req.body;
+
+    if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+    }
+
+    try {
+        const insertQuery = `
+            INSERT INTO paymentcard (userID, cardNumber, cardType, formatedExpirationDate, billingStreet, billingCity, billingState, billingZip) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+
+                // Individual cipher for each section
+                var cardNumberCipher = crypto.createCipheriv('aes-128-cbc', 'mycardinfo'.padEnd(16, '0'), iv);
+                var cardTypeCipher = crypto.createCipheriv('aes-128-cbc', 'mycardinfo'.padEnd(16, '0'), iv);
+                var billingStreetCipher = crypto.createCipheriv('aes-128-cbc', 'mycardinfo'.padEnd(16, '0'), iv);
+                var billingCityCipher = crypto.createCipheriv('aes-128-cbc', 'mycardinfo'.padEnd(16, '0'), iv);
+                var billingStateCipher = crypto.createCipheriv('aes-128-cbc', 'mycardinfo'.padEnd(16, '0'), iv);
+                var billingZipCipher = crypto.createCipheriv('aes-128-cbc', 'mycardinfo'.padEnd(16, '0'), iv);
+                var expirationDateCipher = crypto.createCipheriv('aes-128-cbc', 'mycardinfo'.padEnd(16, '0'), iv);
+
+                const formattedExpirationDate = expirationDate.length === 7 ? `${expirationDate}-01` : expirationDate;
+
+                //hashing cardnumber
+                var hashedCardNumber = cardNumberCipher.update(cardNumber, 'utf8', 'hex')
+                hashedCardNumber += cardNumberCipher.final('hex')
+                //hashing cardType
+                var hashedCardType = cardTypeCipher.update(cardType, 'utf8', 'hex')
+                hashedCardType += cardTypeCipher.final('hex')
+                //hashing card expiration date
+                var hashedExpirationDate = expirationDateCipher.update(formattedExpirationDate, 'utf8', 'hex')
+                hashedExpirationDate += expirationDateCipher.final('hex')
+                //hashing billingStreet
+                var hashedBillingStreet = billingStreetCipher.update(billingStreet, 'utf8', 'hex')
+                hashedBillingStreet += billingStreetCipher.final('hex')
+                //hashing billingCity
+                var hashedBillingCity = billingCityCipher.update(billingCity, 'utf8', 'hex')
+                hashedBillingCity += billingCityCipher.final('hex')
+                //hashing billingState
+                var hashedBillingState = billingStateCipher.update(billingState, 'utf8', 'hex')
+                hashedBillingState += billingStateCipher.final('hex')
+                //hashing billingZip
+                var hashedBillingZip = billingZipCipher.update(billingZip, 'utf8', 'hex')
+                hashedBillingZip += billingZipCipher.final('hex')
+
+                const cardValues = [userId, hashedCardNumber, hashedCardType, hashedExpirationDate, 
+                        hashedBillingStreet, hashedBillingCity, hashedBillingState, hashedBillingZip];
+
+        await db.execute(insertQuery, cardValues);
+
+        res.json({ message: "Card added successfully" });
+                
+            
+    } catch (error) {
+        console.error("Error adding card:", error);
+        res.status(500).json({ message: "Failed to add card" });
+    }
+});
+
+//edit profile - delete a card
+app.post("/delete-card", async (req, res) => {
+    const { userId, cardNumber } = req.body;
+
+    if (!userId || !cardNumber) {
+        return res.status(400).json({ message: "User ID and card number are required" });
+    }
+
+    try {
+        // Encrypt the card number using the same encryption method
+        const cipher = crypto.createCipheriv("aes-128-cbc", "mycardinfo".padEnd(16, "0"), iv);
+        let encryptedCardNumber = cipher.update(cardNumber, "utf8", "hex");
+        encryptedCardNumber += cipher.final("hex");
+
+        // Delete the card by matching encrypted value
+        const result = await db.execute("DELETE FROM paymentcard WHERE userID = ? AND cardNumber = ?", [userId, encryptedCardNumber]);
+
+        if (result[0].affectedRows === 0) {
+            return res.status(404).json({ message: "Card not found" });
+        }
+
+        res.json({ message: "Card deleted successfully" });
+    } catch (error) {
+        console.error("Error deleting card:", error);
+        res.status(500).json({ message: "Failed to delete card" });
+    }
+});
+
+//edit profile - update card values
+const encryptValue = (value) => {
+    const cipher = crypto.createCipheriv("aes-128-cbc", "mycardinfo".padEnd(16, "0"), iv);
+    let encrypted = cipher.update(value, "utf8", "hex");
+    encrypted += cipher.final("hex");
+    return encrypted;
+};
+app.post("/update-card", async (req, res) => {
+    const { userId, oldCardNumber, newCardNumber, cardType, expirationDate, billingStreet, billingCity, billingState, billingZip } = req.body;
+    console.log("🔹 Received request to update card");
+
+    if (!userId || !oldCardNumber || !newCardNumber) {
+        return res.status(400).json({ error: "User ID, Old Card Number, and New Card Number are required." });
+    }
+
+    try {
+        // Encrypt values before querying and updating
+        const encryptedOldCardNumber = encryptValue(oldCardNumber); // Use this to find the existing card
+        const encryptedNewCardNumber = encryptValue(newCardNumber); // Use this to update card number
+        const encryptedCardType = encryptValue(cardType);
+        const encryptedExpirationDate = encryptValue(expirationDate);
+        const encryptedBillingStreet = encryptValue(billingStreet);
+        const encryptedBillingCity = encryptValue(billingCity);
+        const encryptedBillingState = encryptValue(billingState);
+        const encryptedBillingZip = encryptValue(billingZip);
+
+        // Ensure the card belongs to the user
+        const [existingCard] = await db.execute(
+            "SELECT * FROM paymentcard WHERE userID = ? AND cardNumber = ?",
+            [userId, encryptedOldCardNumber]
+        );
+
+        if (existingCard.length === 0) {
+            return res.status(404).json({ error: "Card not found or does not belong to user." });
+        }
+
+        // Update encrypted values, including the new card number
+        await db.execute(
+            `UPDATE paymentcard 
+            SET cardNumber = ?, 
+                cardType = ?, 
+                formatedExpirationDate = ?, 
+                billingStreet = ?, 
+                billingCity = ?, 
+                billingState = ?, 
+                billingZip = ? 
+            WHERE userID = ? AND cardNumber = ?`,
+            [
+                encryptedNewCardNumber, // Updating card number
+                encryptedCardType, 
+                encryptedExpirationDate, 
+                encryptedBillingStreet, 
+                encryptedBillingCity, 
+                encryptedBillingState, 
+                encryptedBillingZip, 
+                userId, 
+                encryptedOldCardNumber // Match old encrypted number
+            ]
+        );
+
+        res.json({ message: "Card updated successfully and securely." });
+
+    } catch (error) {
+        console.error("Error updating card:", error);
+        res.status(500).json({ error: "Internal server error." });
+    }
+});
+
+//endpoint for adding movies - admin duty
+app.post("/save-movie", async (req, res) => {
+    try {
+        console.log("Received request body:", req.body);
+
+        const { title, trailerVideo, moviePoster, rating, category, director, producer, cast, synopsis, genre, duration} = req.body;
+        const movieInsertQuery = `INSERT INTO movies (title, category, cast, director, producer, 
+        synopsis, trailer_picture, trailer_video, mpaa_rating, genre, duration) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+        const movieValues = [title, category, cast, director, producer, synopsis, moviePoster, 
+        trailerVideo, rating, genre, duration];
+
+        await db.execute(movieInsertQuery, movieValues);
+        res.status(200).json({ message: "Movie added successfully!" });
+
+    } catch(error) {
+        console.error("Error adding movie:", error);
+        res.status(500).json({error: "Internal server error."});
+    }
+});
+
+app.delete("/movies/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        await db.execute("DELETE FROM movies WHERE id = ?", [id]);
+        res.json({ message: "Movie deleted successfully" });
+    } catch (error) {
+        console.error("Error deleting movie:", error);
+        res.status(500).json({error: "Internal server error."});
+    }
+})
+
+//used in scheduling a movie
+app.get("/movies/currently-running", async (req, res) => {
+    try {
+        const [movies] = await db.query("SELECT title FROM movies WHERE category = ?", ["Currently Running"]);
+        res.json(movies);
+    } catch (error) {
+        console.error("Error fetching movies:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
+app.get("/auditoriums", async (req,res) => {
+    try {
+        const [auditoriums] = await db.execute("SELECT auditoriumName FROM auditorium");
+        //const auditoriums = result[0];
+        res.json(auditoriums);
+    } catch (error) {
+        console.error("Problem fetching auditoriums: ", error);
+        res.status(500).json({message: "Server error"});
+    }
+});
+
+app.get("/showtimes", async (req,res) => {
+    try {
+        //const [showtimes] = await db.execute("SELECT timeStamp from showtimes")
+        //res.json(showtimes);
+        const results = await db.query(`SELECT showtimeID, timeStamp FROM showtimes`);
+        res.json(results[0]); // Send both ID and time
+    } catch (error) {
+        console.error("Problem fetching timestamps:", error);
+        res.status(500).json({message: "Server error"});
+    }
+});
+
+app.post("/save-showing", async (req, res) => {
+    try {
+        const{movie, auditorium, showtime, date, time} = req.body;
+
+        const [movieRows] = await db.query("SELECT id FROM movies WHERE title = ?", [movie]);
+        const movieID = movieRows[0].id;
+
+        const [auditoriumRows] = await db.query("SELECT auditoriumID from auditorium where auditoriumName = ?", [auditorium]);
+        const auditoriumID = auditoriumRows[0].auditoriumID
+
+        const [showtimeRows] = await db.query("SELECT showtimeid from showtimes where timestamp = ?", [showtime])
+        const showtimeID = showtimeRows[0].showtimeid;
+
+        const showingInsertQuery = `INSERT into screening (movieID, auditoriumID, showtimeID, date)
+        VALUES (?, ?, ?, ?)`
+        const showingValues = [movieID, auditoriumID, showtimeID, date]
+
+        await db.execute(showingInsertQuery, showingValues);
+        res.status(200).json({ message: "Showing added successfully!" });
+    } catch (error) {
+        console.error("Error adding showing:", error);
+        res.status(500).json({error: "Internal server error."});
+    }
+});
+
+app.get("/screenings", async (req, res) => {
+    try {
+        const query = `
+        SELECT 
+            screening.showID,
+            movies.title AS movie,
+            auditorium.auditoriumName AS auditorium,
+            showtimes.timestamp AS showtime,
+            screening.date
+        FROM 
+            screening
+        JOIN 
+            movies ON screening.movieID = movies.id
+        JOIN 
+            auditorium ON screening.auditoriumID = auditorium.auditoriumID
+        JOIN 
+            showtimes ON screening.showtimeID = showtimes.showtimeid;
+    `;
+        const [rows] = await db.execute(query);
+        res.json(rows);
+    } catch (error) {
+        console.error("Error fetching movies:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+app.delete("/screenings/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        await db.execute("DELETE FROM screening WHERE showid = ?", [id]);
+        res.json({ message: "Screening deleted successfully" });
+    } catch (error) {
+        console.error("Error deleting screening:", error);
+        res.status(500).json({error: "Internal server error."});
+    }
+})
+
+app.get("/booked-times/:auditorium/:date", async (req, res) => {
+    const { auditorium, date } = req.params; // Get auditorium and date from frontend
+    try {
+        const auditoriumResult = await db.query(
+            `SELECT auditoriumID FROM auditorium WHERE auditoriumName = ?`, 
+            [auditorium]
+        );
+        const auditoriumID = auditoriumResult[0][0]?.auditoriumID;
+
+        // Query to select showtimeID for a specific auditorium and date
+        const results = await db.query(
+            `SELECT showtimeID FROM screening WHERE auditoriumID = ? AND date = ?`, 
+            [auditoriumID, date]
+        ); 
+        // Map through results to extract the showtimeID
+        const bookedShowtimes = results[0].map(row => row.showtimeID); // Use showtimeID here       
+        res.json(bookedShowtimes); // Return array of booked showtimeIDs
+    } catch (error) {
+        console.error("Error fetching booked showtimes:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
+app.post("/addPromotion", async (req, res) => {
+    try {
+      const { promotionName, promotionStatus } = req.body;
+  
+      // Insert promotion into the database
+      const promotionInsertQuery = `INSERT INTO promotions (name, status) VALUES (?, ?)`;
+      await db.execute(promotionInsertQuery, [promotionName, promotionStatus]);
+  
+      // Fetch users who have opted in for promotions (where promotions = 1)
+      const usersQuery = "SELECT email FROM registeredusers WHERE promotions = 1";
+      const [users] = await db.execute(usersQuery);
+  
+      // Send email to all users who opted in for promotions
+      const mailOptions = {
+        from: "pranavisp2004@gmail.com",
+        subject: `New Promotion: ${promotionName}`,
+      };
+  
+      users.forEach((user) => {
+        mailOptions.to = user.email;
+        mailOptions.text = `Hello! We have a new promotion for you: ${promotionName} - Status: ${promotionStatus}`;
+  
+        // Send the email to each user
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            console.error("Error sending email:", error);
+          } else {
+            console.log("Email sent:", info.response);
+          }
+        });
+      });
+  
+      res.json({ message: "Promotion added and emails sent!" });
+    } catch (error) {
+      console.error("Error adding promotion:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+
+
+app.get("/screening-details/:id", async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const [screenings] = await db.execute(`
+            SELECT screening.*, showtimes.timestamp AS showtime
+            FROM screening
+            JOIN showtimes ON screening.showtimeID = showtimes.showtimeID
+            WHERE screening.movieID = ?
+        `, [id]);
+
+        res.json(screenings);
+    } catch (error) {
+        console.error("Error fetching screening:", error);
         res.status(500).json({ error: "Database error" });
     }
 });

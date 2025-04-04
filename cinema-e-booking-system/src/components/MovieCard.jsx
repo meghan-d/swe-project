@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function MovieCard({ id, title, poster, trailer, allowToBook = true }) {
+export default function MovieCard({ id, rating, title, poster, trailer, allowToBook = true }) {
     const [playTrailer, setPlayTrailer] = useState(false);
     const navigate = useNavigate();
 
@@ -19,6 +19,10 @@ export default function MovieCard({ id, title, poster, trailer, allowToBook = tr
             {/* Movie Title */}
             <div className="flex-1 flex items-center justify-center w-full pt-2">
                 <h3 className="text-2xl font-bold text-center">{title}</h3>
+            </div>
+
+            <div className="flex-1 flex items-center justify-center w-full pt-2">
+                <h4 className="text-black text-center">{rating}</h4>
             </div>
 
             <div className="flex-1 flex flex-col justify-end w-full">
@@ -52,7 +56,7 @@ export default function MovieCard({ id, title, poster, trailer, allowToBook = tr
                 {allowToBook && (
                     <button 
                         className="mt-3 px-3 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600"
-                        onClick={() => alert("Book Now button clicked")}
+                        onClick={() => navigate(`/select-showtime/${id}`)}
                     >
                         Book Now
                     </button>

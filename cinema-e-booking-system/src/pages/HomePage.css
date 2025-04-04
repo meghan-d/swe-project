@@ -1,9 +1,10 @@
 /* General Page Styling */
 .homepage {
     background-color: #121212; /* Dark theme background */
-    color: white; /* Text color for contrast */
+    color: #ffd900; /* Text color for contrast */
     min-height: 100vh;
     padding-bottom: 40px;
+    text-shadow: 0px 0px 4px black;
   }
   
   /* Content Layout */
@@ -58,3 +59,10 @@
     color: black;
   }
   
+  .no-movies-message {
+    font-weight: bold;
+    text-align: center;
+    font-size: 1.5rem;
+    margin-top: 50px;
+
+  }

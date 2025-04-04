@@ -61,14 +61,16 @@ const SeatSelection = () => {
       <div className="mt-8 text-center">
         <p className="font-md mb-4">Selected Seats:</p> 
         <div className="flex flex-col items-center">
-          {Object.entries(selectedSeats).map(([i, type]) => (
-            <div key={i} className="flex items-center gap-4 mb-2">
+          {selectedSeats.map((seat)=> (
+            <div key={seat} className="flex items-center gap-4 mb-2">
               <span>
-                {String.fromCharCode(65 + Math.floor(i/8))}{i % 8 + 1}
+                {String.fromCharCode(65 + Math.floor(seat/8))}{seat % 8 + 1}
               </span>
               <select className="p-1 border rounded">
-                <option value="Adult">Adult</option>
-                <option value="Child">Child (12 and under)</option>
+                <option value="Adult">Adult - $10</option>
+                <option value="Senior">Senior (60+) - $8</option>
+                <option value="Military">Military - $8</option>
+                <option value="Child">Child (12 and under) - $7</option>
               </select>
             </div>
           ))}

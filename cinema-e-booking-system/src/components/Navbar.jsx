@@ -122,7 +122,7 @@ export default function Navbar({ movies, setFilteredMovies }) {
 
     setFilteredMovies(
       query
-        ? movies.filter((movie) => movie.title.toLowerCase().includes(query))
+        ? movies.filter((movie) => movie.title.toLowerCase().includes(query) || movie.genre.toLowerCase().includes(query)) 
         : movies
     );
   };

@@ -75,6 +75,11 @@ const HomePage = () => {
     <div className="homepage">
       <Navbar movies={movies} setFilteredMovies={setFilteredMovies} />
       <div className="homepage-content">
+        {/* Show "No Movies Found" only if both lists are empty */}
+        {currentlyRunning.length === 0 && comingSoon.length === 0 ? (
+          <p className="no-movies-message"> No movies found. Please try a different search.</p>
+        ) : (
+          <>
         {/* Show only relevant sections based on search results */}
         {currentlyRunning.length > 0 && (
           <MovieList
@@ -89,6 +94,8 @@ const HomePage = () => {
             allowToBook={false}
             movies={comingSoon}
           />
+        )}
+        </>
         )}
       </div>
     </div>

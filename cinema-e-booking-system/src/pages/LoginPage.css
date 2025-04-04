@@ -129,20 +129,22 @@ body {
 }
 
 /* Sign Up Link */
-.signup {
-  margin-top: 15px;
+.signup-option {
+  margin-top: 20px;
   font-size: 14px;
   color: white;
 }
 
-.signup a {
-  color: #fff;
+.signup-option span {
+  color: #ffd700;
   font-weight: bold;
-  text-decoration: none;
+  cursor: pointer;
+  transition: 0.3s ease;
 }
 
-.signup a:hover {
+.signup-option span:hover {
   text-decoration: underline;
+  color: #ffcc00;
 }
 
 .buttons {

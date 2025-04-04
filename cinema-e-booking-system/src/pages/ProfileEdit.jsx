@@ -265,9 +265,10 @@ const ProfileEdit = () => {
   const navigate = useNavigate();
 
   const [profile, setProfile] = useState({
+    //id: "",
     name: "",
     email: "",
-    password: "",
+    //password: "",
     phone: "",
     street: "",
     city: "",
@@ -290,6 +291,13 @@ const ProfileEdit = () => {
     billingState: '',
     billingZip: '',
   });
+
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmNewPassword: "",
+  });
+  
 
   // Fetch user data when the component mounts
   useEffect(() => {
@@ -321,14 +329,69 @@ const ProfileEdit = () => {
     fetchUserData();
   }, []); // Empty dependency array to run only once when the component mounts
 
-  const handleChange = (e) => {
+  /**const handleChange = (e) => {
     setProfile({ ...profile, [e.target.name]: e.target.value });
-  };
+  };*/
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    if (profile.selectedCard) {
+        // If a card is selected, update only the selected card
+        setProfile((prevProfile) => ({
+            ...prevProfile,
+            selectedCard: {
+                ...prevProfile.selectedCard,
+                [name]: value, // Update the specific field
+            },
+            // Also update the paymentCards array
+            paymentCards: prevProfile.paymentCards.map((card) =>
+                card.cardNumber === prevProfile.selectedCard.cardNumber
+                    ? { ...card, [name]: value } // Update the matching card
+                    : card
+            ),
+        }));
+    } else {
+        // Normal profile update (not card-related)
+        setProfile((prevProfile) => ({
+            ...prevProfile,
+            [name]: value,
+        }));
+    }
+};
+
 
   const togglePromotions = () => {
     setProfile({ ...profile, promotions: !profile.promotions });
   };
   
+  const handleInputChange = (e) => {
+    setPasswordData({ ...passwordData, [e.target.name]: e.target.value });
+  };
+
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+  
+  
+    const user = JSON.parse(sessionStorage.getItem('user')); 
+    if (!user || !user.id) {
+      alert("You must be logged in to change your password.");
+      return;
+    }
+    const userId = user.id; 
+  
+    try {
+      const response = await axios.post("http://localhost:5000/change-password", {
+        userId,
+        currentPassword: passwordData.currentPassword,
+        newPassword: passwordData.newPassword,
+      });
+  
+      alert(response.data.message);
+    } catch (error) {
+      alert("Error changing password: " + error.response.data.message);
+    }
+  };
+
   const handleCardSelect = (e) => {
     const selectedCard = profile.paymentCards.find(
       (card) => card.cardNumber === e.target.value
@@ -339,16 +402,33 @@ const ProfileEdit = () => {
     });
   };
 
-  const removeCard = () => {
-    const updatedCards = profile.paymentCards.filter(
-      (card) => card.cardNumber !== profile.selectedCard.cardNumber
-    );
-    setProfile({
-      ...profile,
-      paymentCards: updatedCards,
-      selectedCard: null, // Clear the selected card after removal
-    });
-  };
+  const removeCard = async () => {
+    if (!profile.selectedCard) {
+        alert("Please select a card to remove.");
+        return;
+    }
+
+    try {
+        await axios.post("http://localhost:5000/delete-card", {
+            userId: JSON.parse(sessionStorage.getItem("user")).id, // Get user ID
+            cardNumber: profile.selectedCard.cardNumber, // Send raw card number
+        });
+
+        setProfile({
+            ...profile,
+            paymentCards: profile.paymentCards.filter(
+                (card) => card.cardNumber !== profile.selectedCard.cardNumber
+            ),
+            selectedCard: null, // Clear selection
+        });
+
+        alert("Card removed successfully.");
+    } catch (error) {
+        console.error("Error removing card:", error);
+        alert("Failed to remove card.");
+    }
+};
+
 
   const addNewCard = () => {
     if (profile.paymentCards.length < 4) {
@@ -364,7 +444,7 @@ const ProfileEdit = () => {
     }));
   };
  
-  const handleSaveNewCard = () => {
+  /*const handleSaveNewCard = () => {
     if (newCard.cardType && newCard.cardNumber && newCard.expirationDate) {
       setProfile((prevProfile) => ({
         ...prevProfile,
@@ -386,16 +466,94 @@ const ProfileEdit = () => {
     } else {
       alert("Please fill in all fields before adding the card.");
     }
+  };*/
+  const handleSaveNewCard = async () => {
+    if (!newCard.cardType || !newCard.cardNumber || !newCard.expirationDate) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+  
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    //console.log(user.id);
+    try {
+      const response = await axios.post("http://localhost:5000/add-new-card", {
+        userId: user.id,
+        ...newCard
+      });
+  
+      setProfile((prevProfile) => ({
+        ...prevProfile,
+        paymentCards: [...prevProfile.paymentCards, newCard],
+      }));
+  
+      setNewCard({ cardType: '', cardNumber: '', expirationDate: '', billingStreet: '', billingCity: '', billingState: '', billingZip: '' });
+      setIsAddingCard(false);
+      alert(response.data.message);
+    } catch (error) {
+      alert("Error adding card. Please try again.");
+    }
   };
   
+  const saveCardChanges = async () => {
+    if (!profile.selectedCard) {
+        alert("No card selected.");
+        return;
+    }
 
-  const handleSave = () => {
+    const user = JSON.parse(sessionStorage.getItem("user"));
+
+    try {
+        const response = await axios.post("http://localhost:5000/update-card", {
+            userId: user.id,
+            oldCardNumber: profile.selectedCard.cardNumber,  // Current card number (unencrypted)
+            newCardNumber: profile.selectedCard.cardNumber,  // Change this if updating the number
+            cardType: profile.selectedCard.cardType,
+            expirationDate: profile.selectedCard.expirationDate,
+            billingStreet: profile.selectedCard.billingStreet,
+            billingCity: profile.selectedCard.billingCity,
+            billingState: profile.selectedCard.billingState,
+            billingZip: profile.selectedCard.billingZip
+        });
+
+        alert(response.data.message);
+    } catch (error) {
+        alert("Error updating card. Please try again.");
+    }
+};
+
+
+
+  /**const handleSave = () => {
     setIsSaving(true);
     setTimeout(() => {
       setIsSaving(false);
       setSuccessMessage("Profile saved successfully!");
     }, 2000);
+  };*/
+  const handleSave = async () => {
+    setIsSaving(true);
+    const user = JSON.parse(sessionStorage.getItem("user"));
+  
+    try {
+      const response = await axios.post("http://localhost:5000/update-profile", {
+        userId: user.id,
+        name: profile.name,
+        phone: profile.phone,
+        street: profile.street,
+        city: profile.city,
+        state: profile.state,
+        zip: profile.zip,
+        promotions: profile.promotions ? 1 : 0,
+      });
+  
+      setSuccessMessage(response.data.message);
+    } catch (error) {
+      setSuccessMessage("Error updating profile. Please try again.");
+    } finally {
+      setIsSaving(false);
+    }
   };
+  
 
   return (
     <div className="container">
@@ -407,18 +565,29 @@ const ProfileEdit = () => {
 
       <h3 className="text-lg text-yellow-400">Personal Information</h3>
       <div className="form-group">
-        <label className="label">Name</label>
+        <label className="label">Name *</label>
         <input type="text" name="name" value={profile.name} onChange={handleChange} className="input" />
       </div>
 
       <div className="form-group">
-        <label className="label">Phone</label>
+        <label className="label">Phone *</label>
         <input type="text" name="phone" value={profile.phone} onChange={handleChange} className="input" />
       </div>
 
       <div className="form-group">
-        <label className="label">Email</label>
+        <label className="label">Email *</label>
         <input type="text" name="email" value={profile.email} onChange={handleChange} className="input disabled: opacity-50" disabled  />
+      </div>
+      <h3 className="text-lg text-yellow-400 mt-6 mb-2">Change Password</h3>
+
+      <form onSubmit={handleChangePassword} className="form-group">
+        <label className="label">Current Password *</label>
+        <input type="password" name="currentPassword" required onChange={handleInputChange}  value={passwordData.currentPassword} className="input"/>
+        <label className="label">New Password *</label>
+        <input type="password" name="newPassword" required onChange={handleInputChange}  value={passwordData.newPassword} className="input"/>
+      </form>
+      <div className="button-group">
+          <button onClick={handleChangePassword} className="button button-save">Save Password</button>
       </div>
 
       <h3 className="text-lg text-yellow-400 mt-6 mb-2">Payment Information and Billing Address</h3>
@@ -564,6 +733,9 @@ const ProfileEdit = () => {
 
         {profile.selectedCard && (
           <div>
+            <button onClick={saveCardChanges} className="button button-save">
+              Save Changes
+            </button>
             <button onClick={removeCard} className="button delete-button">
               Remove Card
             </button>
@@ -574,19 +746,19 @@ const ProfileEdit = () => {
       <h3 className="text-lg text-yellow-400 mt-6 mb-2">Address</h3>
       <div className="form-group">
         <label className="label">Street</label>
-        <input type="text" name="billingStreet" value={profile.street} onChange={handleChange} className="input" />
+        <input type="text" name="street" value={profile.street} onChange={handleChange} className="input" />
       </div>
       <div className="form-group">
         <label className="label">City</label>
-        <input type="text" name="billingCity" value={profile.city} onChange={handleChange} className="input" />
+        <input type="text" name="city" value={profile.city} onChange={handleChange} className="input" />
       </div>
       <div className="form-group">
         <label className="label">State</label>
-        <input type="text" name="billingState" value={profile.state} onChange={handleChange} className="input" />
+        <input type="text" name="state" value={profile.state} onChange={handleChange} className="input" />
       </div>
       <div className="form-group">
         <label className="label">Zip Code</label>
-        <input type="text" name="billingZip" value={profile.zip} onChange={handleChange} className="input" />
+        <input type="text" name="zip" value={profile.zip} onChange={handleChange} className="input" />
       </div>
       <div className="checkbox">
         <input type="checkbox" id="promotions" checked={profile.promotions} onChange={togglePromotions} />

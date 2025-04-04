@@ -47,6 +47,7 @@ useEffect(() => {
       <aside className="sidebar">
         <h2>Admin Panel</h2>
         <button onClick={() => navigate("/admin-movies")}>Manage Movies</button>
+        <button onClick={() => navigate("/admin-schedule")}>Schedule Movies</button>
         <button onClick={() => navigate("/admin-users")}>Manage Users</button>
         <button onClick={() => navigate("/admin-promotions")}>Manage Promotions</button>
         {isLoggedIn ? (

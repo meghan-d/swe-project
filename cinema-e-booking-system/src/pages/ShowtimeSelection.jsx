@@ -1,14 +1,43 @@
-import React, { useState } from "react";
-
-const showtimes = [
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
+/*const showtimes = [
     { id: 1, date: "March 1st, 2025", times: ["4:00 PM", "6:00 PM", "7:00 PM"] },
     { id: 2, date: "March 2nd, 2025", times: ["5:00 PM", "7:00 PM"] },
     { id: 3, date: "March 3rd, 2025", times: ["4:00 PM", "6:00 PM", "8:00 PM"] },
     { id: 4, date: "March 4th, 2025", times: ["6:00 PM", "8:00 PM"] },
-];
+];*/
 
 export default function ShowtimeSelection() {
+    const { id } = useParams();
     const [selectedShowtime, setSelectedShowtime] = useState({ date: null, time: null });
+    const [showtimes, setShowtimes] = useState([]);
+  
+    useEffect(() => {
+        const fetchScreenings = async () => {
+          try {
+            const res = await axios.get(`http://localhost:5000/screening-details/${id}`);
+      
+            const groupedShowtimes = res.data.reduce((dateblock, show) => {
+              const formattedDate = new Date(show.date).toDateString();
+      
+              if (!dateblock[formattedDate]) {
+                dateblock[formattedDate] = { id: show.showID, date: formattedDate, times: [] };
+              }
+      
+              dateblock[formattedDate].times.push(show.showtime);
+              return dateblock;
+            }, {});
+            
+            setShowtimes(Object.values(groupedShowtimes));
+          } catch (err) {
+            console.error("Error fetching screenings:", err);
+          }
+        };
+        fetchScreenings();
+      }, [id]);
+      
+
 
     return (
         <div className="p-6">

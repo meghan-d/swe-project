@@ -157,7 +157,9 @@ const LoginPage = () => {
           <div className="buttons">
             <button type="submit" className="login-button">Login</button>
           </div>
-
+          <div className="signup-option">
+            <p>Don't have an account? <span onClick={() => navigate("/register")}>Sign Up</span></p>
+          </div>
         </form>
       </div>
     </div>

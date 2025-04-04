@@ -16,8 +16,10 @@ import AdminUsers from './pages/AdminUsers';
 import ShowtimeSelection from "./pages/ShowtimeSelection";
 import ResetPassword from "./pages/ResetPassword";
 import ForgotPassword from "./pages/ForgotPassword";  // Ensure this is correctly imported
-
-
+import AddMovies from "./pages/AddMovies";
+import AdminScheduleMovies from "./pages/AdminScheduleMovies"
+import ScheduleMovie from "./pages/ScheduleMovie"
+import MovieDetails from "./pages/MovieDetails";
 
 const App = () => {
   return (
@@ -38,8 +40,12 @@ const App = () => {
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/admin-movies" element={<AdminMovies />} />
         <Route path="/admin-promotions" element={<AdminPromotions />} />
-        <Route path="/select-showtime" element={<ShowtimeSelection />} />
+        <Route path="/select-showtime/:id" element={<ShowtimeSelection />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/add-movie" element={<AddMovies />} />
+        <Route path="/admin-schedule" element={<AdminScheduleMovies />} />
+        <Route path="/schedule-movie" element={<ScheduleMovie />} />
+        <Route path="/movie-details/:id" element={<MovieDetails />} />
       </Routes>
     </Router>
   );

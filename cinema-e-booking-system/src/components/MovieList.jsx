@@ -10,6 +10,7 @@ export default function MovieList({ title, allowToBook, movies }) {
                         key={movie.id} //key = {index}
                         id={movie.id}
                         title={movie.title} 
+                        rating={movie.mpaa_rating}
                         poster={movie.trailer_picture} // ✅ Use `trailer_picture`
                         trailer={movie.trailer_video}
                         allowToBook={allowToBook}

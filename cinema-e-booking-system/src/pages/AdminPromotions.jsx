@@ -10,18 +10,34 @@ const AdminPromotions = () => {
   const [newPromotion, setNewPromotion] = useState("");
   const [status, setStatus] = useState("Active");
 
-  const handleAddPromotion = () => {
+  const handleAddPromotion = async () => {
     if (newPromotion.trim() === "") return; // Prevent empty promotions
-
+  
     const newPromo = {
-      id: promotions.length + 1,
-      name: newPromotion,
-      status: status,
+      promotionName: newPromotion,
+      promotionStatus: status,
     };
-
-    setPromotions([...promotions, newPromo]);
-    setNewPromotion(""); // Reset input field
+  
+    try {
+      // Send the promotion data to the backend
+      const response = await fetch("http://localhost:5000/addPromotion", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newPromo),
+      });
+  
+      const data = await response.json();
+      console.log(data.message); // Confirm success
+      setPromotions([...promotions, newPromo]);
+      setNewPromotion(""); // Reset input field
+    } catch (error) {
+      console.error("Error adding promotion:", error);
+    }
   };
+  
+  
 
   const handleDelete = (id) => {
     setPromotions(promotions.filter((promo) => promo.id !== id));

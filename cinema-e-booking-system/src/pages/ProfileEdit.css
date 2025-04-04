@@ -135,8 +135,9 @@
   padding: 10px 12px;
   border-radius: 4px;
   font-size: 16px;
-  height: 40px;
+  height: 55px;
   margin-top: 10px;
+  margin-left: 20px;
 }
 .checkbox {
   color: #FFD700;
