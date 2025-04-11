@@ -38,7 +38,7 @@ export default function MovieCard({ id, rating, title, poster, trailer, allowToB
                     <div>
                         <iframe
                             className="w-full h-40 mt-2"
-                            src={trailer}  // ✅ Make sure this receives correct trailer link
+                            src={`${trailer}&autoplay=1&mute=1`}  // ✅ Make sure this receives correct trailer link
                             title={title}
                             allow="autoplay; encrypted-media"
                             allowFullScreen

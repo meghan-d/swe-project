@@ -58,55 +58,11 @@ app.get("/movies", async (req, res) => {
     }
 });
 
-// Register User (with Email Verification)
-/*app.post("/register", async (req, res) => {
-    try {
-        console.log("Received request body:", req.body);
-
-        const { name, email, password, phone, cardType, cardNumber, expirationDate,
-            billingStreet, billingCity, billingState, billingZip,
-            addressStreet, addressCity, addressState, addressZip } = req.body;
-
-        // Convert expirationDate from 'YYYY-MM' to 'YYYY-MM-DD' format
-        const formattedExpirationDate = expirationDate.length === 7 ? `${expirationDate}-01` : expirationDate;
-
-        // Hash password
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        // Generate a 6-digit verification code
-        const verificationCode = Math.floor(100000 + Math.random() * 900000);
-
-        // Insert user with verification code (unverified initially)
-        const sql = `INSERT INTO users (name, email, password, phone, cardType, cardNumber, expirationDate, 
-            billingStreet, billingCity, billingState, billingZip, addressStreet, addressCity, addressState, addressZip, verificationCode, isVerified) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`;
-
-        const values = [name, email, hashedPassword, phone, cardType, cardNumber, formattedExpirationDate, 
-            billingStreet, billingCity, billingState, billingZip, addressStreet, addressCity, addressState, addressZip, verificationCode];
-
-        await db.execute(sql, values);
-
-        // Send email with verification code
-        const mailOptions = {
-            from: "pranavisp2004@gmail.com", // Replace with your email
-            to: email,
-            subject: "Verify Your Account",
-            text: `Your verification code is: ${verificationCode}`
-        };
-
-        await transporter.sendMail(mailOptions);
-
-        res.json({ message: "User registered! Verification email sent." });
-    } catch (error) {
-        console.error("Error inserting user:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-});*/
-
 //constant iv 
 const ivBuffer = 'a1b2c3d4e5f67890extra'; 
 const iv = Buffer.from(ivBuffer.slice(0, 16), 'utf8')
 
+// Register User (with Email Verification)
 app.post("/register", async (req, res) => {
     try {
         console.log("Received request body:", req.body);
@@ -247,31 +203,6 @@ app.post('/verify-email', async (req, res) => {
   });
   
 // Login (Only if the user is verified)
-/*app.post("/login", async (req, res) => {
-    try {
-        const { username, password } = req.body;
-        
-        const [result] = await db.execute("SELECT * FROM users WHERE email = ?", [username]);
-
-        if (result.length > 0) {
-            if (result[0].isVerified === 0) {
-                return res.status(403).json({ error: "Email not verified. Please check your email." });
-            }
-
-            const isMatch = await bcrypt.compare(password.toString(), result[0].password);
-            if (isMatch) {
-                return res.json({ Status: "Success" });
-            } else {
-                return res.json({ Error: "Password does not match the email" });
-            }
-        } else {
-            return res.json({ Error: "No email associated with an account" });
-        }
-    } catch (error) {
-        console.error("Error fetching login info:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-});*/
 app.post("/login", async (req, res) => {
     try {
       const { username, password } = req.body;
@@ -877,32 +808,38 @@ app.get("/booked-times/:auditorium/:date", async (req, res) => {
 
 app.post("/addPromotion", async (req, res) => {
     try {
-      const { promotionName, promotionStatus } = req.body;
+      const { promoCode, discount, expirationDate } = req.body;
   
       // Insert promotion into the database
-      const promotionInsertQuery = `INSERT INTO promotions (name, status) VALUES (?, ?)`;
-      await db.execute(promotionInsertQuery, [promotionName, promotionStatus]);
+      const promotionInsertQuery = `INSERT INTO promotions (promoCode, discount, expirationDate) VALUES (?, ?, ?)`;
+      await db.execute(promotionInsertQuery, [promoCode, discount, expirationDate]);
   
       // Fetch users who have opted in for promotions (where promotions = 1)
-      const usersQuery = "SELECT email FROM registeredusers WHERE promotions = 1";
+      const usersQuery = "SELECT email FROM users WHERE promotions = 1";
       const [users] = await db.execute(usersQuery);
   
-      // Send email to all users who opted in for promotions
+      // Send email to all opted-in users
       const mailOptions = {
         from: "pranavisp2004@gmail.com",
-        subject: `New Promotion: ${promotionName}`,
+        subject: `New Promotion Available!`,
       };
   
       users.forEach((user) => {
         mailOptions.to = user.email;
-        mailOptions.text = `Hello! We have a new promotion for you: ${promotionName} - Status: ${promotionStatus}`;
+        mailOptions.text = `🎉 Hello! We have a new promotion just for you!
   
-        // Send the email to each user
+  Promo Code: ${promoCode}
+  Discount: ${discount}
+  Expires on: ${expirationDate}
+  
+  Use it while it lasts!`;
+  
+        // Send email
         transporter.sendMail(mailOptions, (error, info) => {
           if (error) {
-            console.error("Error sending email:", error);
+            console.error(`Error sending to ${user.email}:`, error);
           } else {
-            console.log("Email sent:", info.response);
+            console.log(`Promotion email sent to ${user.email}:`, info.response);
           }
         });
       });

@@ -2,24 +2,22 @@ import React, { useState } from "react";
 import "./AdminPromotions.css";
 
 const AdminPromotions = () => {
-  const [promotions, setPromotions] = useState([
-    { id: 1, name: "Weekend Special - 20% Off", status: "Active" },
-    { id: 2, name: "Student Discount - 10% Off", status: "Expired" },
-  ]);
+  const [promotions, setPromotions] = useState([]);
 
-  const [newPromotion, setNewPromotion] = useState("");
-  const [status, setStatus] = useState("Active");
+  const [promoCode, setPromoCode] = useState("");
+  const [discount, setDiscount] = useState("");
+  const [expirationDate, setExpirationDate] = useState("");
 
   const handleAddPromotion = async () => {
-    if (newPromotion.trim() === "") return; // Prevent empty promotions
-  
+    if (!promoCode.trim() || !discount.trim() || !expirationDate.trim()) return;
+
     const newPromo = {
-      promotionName: newPromotion,
-      promotionStatus: status,
+      promoCode,
+      discount,
+      expirationDate,
     };
-  
+
     try {
-      // Send the promotion data to the backend
       const response = await fetch("http://localhost:5000/addPromotion", {
         method: "POST",
         headers: {
@@ -27,20 +25,25 @@ const AdminPromotions = () => {
         },
         body: JSON.stringify(newPromo),
       });
-  
+
       const data = await response.json();
       console.log(data.message); // Confirm success
+
       setPromotions([...promotions, newPromo]);
-      setNewPromotion(""); // Reset input field
+
+      // Clear inputs
+      setPromoCode("");
+      setDiscount("");
+      setExpirationDate("");
     } catch (error) {
       console.error("Error adding promotion:", error);
     }
   };
-  
-  
 
-  const handleDelete = (id) => {
-    setPromotions(promotions.filter((promo) => promo.id !== id));
+  const handleDelete = (index) => {
+    const updatedPromos = [...promotions];
+    updatedPromos.splice(index, 1);
+    setPromotions(updatedPromos);
   };
 
   return (
@@ -50,17 +53,17 @@ const AdminPromotions = () => {
       {/* Table Displaying Promotions */}
       <div className="admin-table">
         <div className="table-header">
-          <span>Promotion</span>
-          <span>Status</span>
+          <span>Promo Code</span>
+          <span>Discount</span>
+          <span>Expires On</span>
           <span>Actions</span>
         </div>
-        {promotions.map((promo) => (
-          <div key={promo.id} className="table-row">
-            <span>{promo.name}</span>
-            <span className={promo.status === "Active" ? "active" : "expired"}>
-              {promo.status}
-            </span>
-            <button className="delete-button" onClick={() => handleDelete(promo.id)}>❌ Delete</button>
+        {promotions.map((promo, index) => (
+          <div key={index} className="table-row">
+            <span>{promo.promoCode}</span>
+            <span>{promo.discount}</span>
+            <span>{promo.expirationDate}</span>
+            <button className="delete-button" onClick={() => handleDelete(index)}>❌ Delete</button>
           </div>
         ))}
       </div>
@@ -69,16 +72,26 @@ const AdminPromotions = () => {
       <div className="add-promo-form">
         <input
           type="text"
-          placeholder="New Promotion Name"
-          value={newPromotion}
-          onChange={(e) => setNewPromotion(e.target.value)}
+          placeholder="Promo Code"
+          value={promoCode}
+          onChange={(e) => setPromoCode(e.target.value)}
           className="promo-input"
         />
-        <select value={status} onChange={(e) => setStatus(e.target.value)} className="promo-select">
-          <option value="Active">Active</option>
-          <option value="Expired">Expired</option>
-        </select>
-        <button className="add-promo" onClick={handleAddPromotion}>➕Add Promotion</button>
+        <input
+          type="text"
+          placeholder="Discount (e.g. 20% Off)"
+          value={discount}
+          onChange={(e) => setDiscount(e.target.value)}
+          className="promo-input"
+        />
+        <input
+          type="date"
+          placeholder="Expiration Date"
+          value={expirationDate}
+          onChange={(e) => setExpirationDate(e.target.value)}
+          className="promo-input"
+        />
+        <button className="add-promo" onClick={handleAddPromotion}>➕ Add Promotion</button>
       </div>
     </div>
   );
