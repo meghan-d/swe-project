@@ -136,7 +136,14 @@ export default function Navbar({ movies, setFilteredMovies }) {
         </div>
 
         {/* Book Movie Button */}
-        <button className="book-button" onClick={() => navigate("/select-movie")}>
+        <button className="book-button" onClick={() =>  {
+          if (sessionStorage.getItem("user") != null) {
+            navigate("/select-movie");
+          } else {
+            navigate("/login")
+          }
+          }}
+          >
           Book a Movie
         </button>
 

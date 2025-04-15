@@ -67,7 +67,13 @@ const MovieDetails = () => {
           <div className = "top-right-column">
           <p className="movie-category">{movie.category}</p>
           {movie.category === 'Currently Running' && (
-            <button className="book-button" onClick={() => navigate(`/select-showtime/${id}`)}> Book Now</button>
+            <button className="book-button" onClick={() =>  {
+              if (sessionStorage.getItem("user") != null) {
+                navigate(`/select-showtime/${id}`)
+              } else {
+                navigate("/login")
+              } 
+            }}> Book Now</button>
           )}
           </div>
           <div className="movie-info">

@@ -56,7 +56,13 @@ export default function MovieCard({ id, rating, title, poster, trailer, allowToB
                 {allowToBook && (
                     <button 
                         className="mt-3 px-3 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600"
-                        onClick={() => navigate(`/select-showtime/${id}`)}
+                        onClick={() =>  {
+                            if (sessionStorage.getItem("user") != null) {
+                                navigate(`/select-showtime/${id}`)
+                              } else {
+                                navigate("/login")
+                              }   
+                        }}
                     >
                         Book Now
                     </button>
