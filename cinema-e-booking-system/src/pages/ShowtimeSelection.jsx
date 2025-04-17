@@ -16,7 +16,7 @@ export default function ShowtimeSelection() {
     useEffect(() => {
         const fetchScreenings = async () => {
           try {
-            const res = await axios.get(`http://localhost:5000/screening-details/${id}`);
+            const res = await axios.get(`http://localhost:5001/screening-details/${id}`);
       
             const groupedShowtimes = res.data.reduce((dateblock, show) => {
               const formattedDate = new Date(show.date).toDateString();

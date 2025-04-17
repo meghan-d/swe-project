@@ -250,7 +250,7 @@ const Registration = () => {
   //sends a users data to the backend
   const saveUserToAdmin = async (newUser) => {
     try {
-      await axios.post("http://localhost:5000/register", newUser) // Send a POST request to your backend
+      await axios.post("http://localhost:5001/register", newUser) // Send a POST request to your backend
       setTimeout(() => {
         navigate("/registration-confirm");
       }, 2000);

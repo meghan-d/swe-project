@@ -312,7 +312,7 @@ const ProfileEdit = () => {
       console.log("Requesting user data for userId:", userId);
 
       try {
-        const response = await axios.get(`http://localhost:5000/edit-profile?userId=${userId}`);
+        const response = await axios.get(`http://localhost:5001/edit-profile?userId=${userId}`);
         console.log("Response data:", response.data);
         // Ensure that paymentCards is always an array
         setProfile({
@@ -380,7 +380,7 @@ const ProfileEdit = () => {
     const userId = user.id; 
   
     try {
-      const response = await axios.post("http://localhost:5000/change-password", {
+      const response = await axios.post("http://localhost:5001/change-password", {
         userId,
         currentPassword: passwordData.currentPassword,
         newPassword: passwordData.newPassword,
@@ -409,7 +409,7 @@ const ProfileEdit = () => {
     }
 
     try {
-        await axios.post("http://localhost:5000/delete-card", {
+        await axios.post("http://localhost:5001/delete-card", {
             userId: JSON.parse(sessionStorage.getItem("user")).id, // Get user ID
             cardNumber: profile.selectedCard.cardNumber, // Send raw card number
         });
@@ -476,7 +476,7 @@ const ProfileEdit = () => {
     const user = JSON.parse(sessionStorage.getItem("user"));
     //console.log(user.id);
     try {
-      const response = await axios.post("http://localhost:5000/add-new-card", {
+      const response = await axios.post("http://localhost:5001/add-new-card", {
         userId: user.id,
         ...newCard
       });
@@ -503,7 +503,7 @@ const ProfileEdit = () => {
     const user = JSON.parse(sessionStorage.getItem("user"));
 
     try {
-        const response = await axios.post("http://localhost:5000/update-card", {
+        const response = await axios.post("http://localhost:5001/update-card", {
             userId: user.id,
             oldCardNumber: profile.selectedCard.cardNumber,  // Current card number (unencrypted)
             newCardNumber: profile.selectedCard.cardNumber,  // Change this if updating the number
@@ -535,7 +535,7 @@ const ProfileEdit = () => {
     const user = JSON.parse(sessionStorage.getItem("user"));
   
     try {
-      const response = await axios.post("http://localhost:5000/update-profile", {
+      const response = await axios.post("http://localhost:5001/update-profile", {
         userId: user.id,
         name: profile.name,
         phone: profile.phone,

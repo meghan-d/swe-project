@@ -6,7 +6,7 @@ import nodemailer from "nodemailer";
 import crypto from 'crypto';
 
 const app = express();
-const PORT = 5000;
+const PORT = 5001;
 
 // Enable CORS to allow frontend access
 app.use(cors());
@@ -16,9 +16,9 @@ app.use(express.json());
 const connectDB = async () => {
     try {
         const db = await mysql.createConnection({
-            host: "localhost",
+            host: "127.0.0.1",
             user: "root", // Update if your DB user is different
-            password: "Marmar3511@", // Update with your DB password
+            password: "newpassword", // Update with your DB password
             database: "cinema_ebooking"
         });
         console.log("Connected to database");
@@ -869,6 +869,24 @@ app.get("/screening-details/:id", async (req, res) => {
         res.status(500).json({ error: "Database error" });
     }
 });
+
+app.get("/api/promo/:code", async (req, res) => {
+    const { code } = req.params;
+  
+    try {
+      const [rows] = await db.query(
+        "SELECT * FROM promotions WHERE promoCode = ? AND expirationDate >= CURDATE()",
+        [code]
+      );
+  
+      if (!rows.length) return res.status(404).json({ message: "Invalid or expired promo code." });
+      res.json({ discount: rows[0].discount });
+    } catch (err) {
+      console.error("Promo fetch error:", err);
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+  
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);

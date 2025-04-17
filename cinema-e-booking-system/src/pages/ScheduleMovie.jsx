@@ -47,7 +47,7 @@ const ScheduleMovies = () => {
 
     const saveShowing = async (showing) => {
         try {
-            const response = await axios.post("http://localhost:5000/save-showing", showing)
+            const response = await axios.post("http://localhost:5001/save-showing", showing)
             setSuccessMessage(response.data.message);
             setTimeout(() => {
                 navigate("/admin-schedule");
@@ -63,7 +63,7 @@ const ScheduleMovies = () => {
 
     const fetchPlayingMovies = async () => {
         try {
-            const response = await axios.get("http://localhost:5000/movies/currently-running");
+            const response = await axios.get("http://localhost:5001/movies/currently-running");
             console.log("Fetched Movies:", response.data);
             setMovies(response.data);
         } catch (error) {
@@ -72,7 +72,7 @@ const ScheduleMovies = () => {
     };
     const fetchAuditoriums = async () => {
         try {
-            const response = await axios.get("http://localhost:5000/auditoriums");
+            const response = await axios.get("http://localhost:5001/auditoriums");
             console.log("Fetched Auditoriums:", response.data);
             setAuditoriums(response.data);
         } catch (error) {
@@ -81,7 +81,7 @@ const ScheduleMovies = () => {
     };
     const fetchShowtimes = async () => {
         try {
-            const response = await axios.get("http://localhost:5000/showtimes");
+            const response = await axios.get("http://localhost:5001/showtimes");
             console.log("Fetched showtimes:", response.data);
             
             setShowtimes(response.data);
@@ -93,7 +93,7 @@ const ScheduleMovies = () => {
 //added these
     const fetchBookedShowings = async (auditorium, date) => {
         try {
-          const response = await axios.get(`http://localhost:5000/booked-times/${auditorium}/${date}`);
+          const response = await axios.get(`http://localhost:5001/booked-times/${auditorium}/${date}`);
           //console.log("Fetched Booked Showings:", response.data);
           setBookedShowings(response.data); // Set booked showings
         } catch (error) {

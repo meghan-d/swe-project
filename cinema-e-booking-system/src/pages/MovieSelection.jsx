@@ -12,7 +12,7 @@ const MovieSelection = () => {
 
   const fetchMovies = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/movies"); // Fetch movies from backend
+      const res = await axios.get("http://localhost:5001/movies"); // Fetch movies from backend
       setFilteredMovies(res.data);
     } catch (error) {
       console.error("Error fetching movies:", error);

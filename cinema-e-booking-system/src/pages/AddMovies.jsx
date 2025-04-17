@@ -48,7 +48,7 @@ const AddMovies = () => {
 
     const saveMovie = async (newMovie) => { //Sends information to the backend 
         try {
-            const response = await axios.post("http://localhost:5000/save-movie", newMovie)
+            const response = await axios.post("http://localhost:5001/save-movie", newMovie)
             setSuccessMessage(response.data.message);
             setTimeout(() => {
                 navigate("/admin-movies");

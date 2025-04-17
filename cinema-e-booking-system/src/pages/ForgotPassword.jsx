@@ -11,7 +11,7 @@ const ForgotPassword = () => {
   const navigate = useNavigate();
 
   const handleSendCode = () => {
-    axios.post("http://localhost:5000/send-reset-code", { email })
+    axios.post("http://localhost:5001/send-reset-code", { email })
       .then(res => {
         alert("Verification code sent to your email!");
         setStep(2); // Move to verification step
@@ -23,7 +23,7 @@ const ForgotPassword = () => {
   };
 
   const handleVerifyCode = () => {
-    axios.post("http://localhost:5000/verify-reset-code", { email, verificationCode })
+    axios.post("http://localhost:5001/verify-reset-code", { email, verificationCode })
       .then(res => {
         alert("Code verified! Redirecting to reset password page.");
         navigate("/reset-password"); 

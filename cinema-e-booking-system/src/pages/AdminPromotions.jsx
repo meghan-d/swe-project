@@ -18,7 +18,7 @@ const AdminPromotions = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:5000/addPromotion", {
+      const response = await fetch("http://localhost:5001/addPromotion", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
