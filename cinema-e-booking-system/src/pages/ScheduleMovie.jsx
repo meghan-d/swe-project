@@ -72,7 +72,6 @@ const ScheduleMovies = () => {
     const fetchAuditoriums = async () => {
         try {
             const response = await axios.get("http://localhost:5001/auditoriums");
-            const response = await axios.get("http://localhost:5001/auditoriums");
             console.log("Fetched Auditoriums:", response.data);
             setAuditoriums(response.data);
         } catch (error) {
@@ -81,7 +80,6 @@ const ScheduleMovies = () => {
     };
     const fetchShowtimes = async () => {
         try {
-            const response = await axios.get("http://localhost:5001/showtimes");
             const response = await axios.get("http://localhost:5001/showtimes");
             console.log("Fetched showtimes:", response.data);
             
@@ -94,7 +92,6 @@ const ScheduleMovies = () => {
 //added these
     const fetchBookedShowings = async (auditorium, date) => {
         try {
-          const response = await axios.get(`http://localhost:5001/booked-times/${auditorium}/${date}`);
           const response = await axios.get(`http://localhost:5001/booked-times/${auditorium}/${date}`);
           //console.log("Fetched Booked Showings:", response.data);
           setBookedShowings(response.data); // Set booked showings

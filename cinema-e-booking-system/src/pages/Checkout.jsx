@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./Checkout.css";
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import "./Checkout.css";
 
 const Checkout = () => {
   const [payment, setPayment] = useState({ cardNumber: "", expiry: "" });
@@ -53,10 +50,12 @@ const Checkout = () => {
   };
 
   const handleUseSavedCard = (card) => {
+    console.log(card.expirationDate);
+    const formattedExpiry = card.expirationDate?.slice(0, 7);
       setPayment({
         cardType: card.cardType,
         cardNumber: card.cardNumber,
-        expiry: card.expirationDate,
+        expiry: formattedExpiry,
         billingStreet: card.billingStreet,
         billingCity: card.billingCity,
         billingState: card.billingState,

@@ -117,7 +117,6 @@ const ProfileEdit = () => {
   
     try {
       const response = await axios.post("http://localhost:5001/change-password", {
-      const response = await axios.post("http://localhost:5001/change-password", {
         userId,
         currentPassword: passwordData.currentPassword,
         newPassword: passwordData.newPassword,
@@ -140,7 +139,6 @@ const ProfileEdit = () => {
   //removes a card from a users profile
   const removeCard = async () => {
     try {
-        await axios.post("http://localhost:5001/delete-card", {
         await axios.post("http://localhost:5001/delete-card", {
             userId: JSON.parse(sessionStorage.getItem("user")).id, // Get user ID
             cardNumber: profile.selectedCard.cardNumber, // Send raw card number
@@ -186,7 +184,6 @@ const ProfileEdit = () => {
     const user = JSON.parse(sessionStorage.getItem("user"));
     try {
       const response = await axios.post("http://localhost:5001/add-new-card", {
-      const response = await axios.post("http://localhost:5001/add-new-card", {
         userId: user.id,
         ...newCard
       });
@@ -210,7 +207,6 @@ const ProfileEdit = () => {
     const user = JSON.parse(sessionStorage.getItem("user"));
   
     try {
-      const response = await axios.post("http://localhost:5001/update-profile", {
       const response = await axios.post("http://localhost:5001/update-profile", {
         userId: user.id,
         name: profile.name,
