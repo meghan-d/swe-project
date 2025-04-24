@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./AdminPromotions.css";
+import PromotionsRequests from "../facade/PromotionsRequests"
+import { useNavigate } from "react-router-dom";
 
 const AdminPromotions = () => {
   const [promotions, setPromotions] = useState([]);
@@ -7,39 +9,34 @@ const AdminPromotions = () => {
   const [promoCode, setPromoCode] = useState("");
   const [discount, setDiscount] = useState("");
   const [expirationDate, setExpirationDate] = useState("");
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+      fetchPromotions();
+    }, []);
 
   const handleAddPromotion = async () => {
     if (!promoCode.trim() || !discount.trim() || !expirationDate.trim()) return;
 
-    const newPromo = {
-      promoCode,
-      discount,
-      expirationDate,
-    };
-
-    try {
-      const response = await fetch("http://localhost:5000/addPromotion", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newPromo),
-      });
-
-      const data = await response.json();
-      console.log(data.message); // Confirm success
-
+    const newPromo = {promoCode, discount, expirationDate};
+  
+    const res = await PromotionsRequests.addPromotion(newPromo);
+    if (res) {
       setPromotions([...promotions, newPromo]);
 
       // Clear inputs
       setPromoCode("");
       setDiscount("");
       setExpirationDate("");
-    } catch (error) {
-      console.error("Error adding promotion:", error);
     }
   };
 
+  const fetchPromotions = async () => {
+      const res = await PromotionsRequests.getAllPromotions();
+      if (res) {
+        setPromotions(res);
+      }
+  }
   const handleDelete = (index) => {
     const updatedPromos = [...promotions];
     updatedPromos.splice(index, 1);
@@ -48,7 +45,10 @@ const AdminPromotions = () => {
 
   return (
     <div className="admin-container">
-      <h2 className="admin-title">Manage Promotions</h2>
+      <div className="title-container">
+        <h2 className="admin-title">Manage Promotions</h2>
+        <button onClick={() => navigate("/admin-dashboard")} className="back-button">← Back</button>
+      </div>
 
       {/* Table Displaying Promotions */}
       <div className="admin-table">
@@ -62,7 +62,7 @@ const AdminPromotions = () => {
           <div key={index} className="table-row">
             <span>{promo.promoCode}</span>
             <span>{promo.discount}</span>
-            <span>{promo.expirationDate}</span>
+            <span>{new Date(promo.expirationDate).toLocaleDateString()}</span>
             <button className="delete-button" onClick={() => handleDelete(index)}>❌ Delete</button>
           </div>
         ))}
@@ -79,7 +79,7 @@ const AdminPromotions = () => {
         />
         <input
           type="text"
-          placeholder="Discount (e.g. 20% Off)"
+          placeholder="Discount (e.g. 1-100%)"
           value={discount}
           onChange={(e) => setDiscount(e.target.value)}
           className="promo-input"

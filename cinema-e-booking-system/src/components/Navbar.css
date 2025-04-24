@@ -89,3 +89,36 @@
     cursor: pointer;
     transition: all 0.3s ease-in-out;
   }
+
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .dropdown-menu {
+    position: absolute;
+    color: white;
+    top: 100%;
+    left: 0;
+    background-color: gold;
+    border-radius: 25px;
+    z-index: 1000;
+  }
+  
+  .dropdown-item {
+    padding: 10px 20px;
+    width: 100%;
+    text-align: left;
+    border: none;
+    background: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+
+  }
+  
+  .dropdown-item:hover {
+    background-color: white;
+    color: black;
+  }
+  

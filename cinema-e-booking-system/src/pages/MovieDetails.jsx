@@ -13,7 +13,7 @@ const MovieDetails = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/movie-details/${id}`)
+      .get(`http://localhost:5001/movie-details/${id}`)
       .then((res) => {
         setMovie(res.data);
       })
@@ -26,7 +26,7 @@ const MovieDetails = () => {
   useEffect(() => {
     const fetchScreenings = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/screening-details/${id}`);
+        const res = await axios.get(`http://localhost:5001/screening-details/${id}`);
   
         const groupedShowtimes = res.data.reduce((dateblock, show) => {
           const formattedDate = new Date(show.date).toDateString();

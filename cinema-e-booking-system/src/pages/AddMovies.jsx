@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./AddMovies.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import MovieRequests from "../facade/MovieRequests";
 
 const AddMovies = () => {
     const navigate = useNavigate();
@@ -11,7 +12,6 @@ const AddMovies = () => {
         trailerVideo: "",
         moviePoster: "",
         rating: "",
-        //category: "Coming Soon",
         category: "",
         director: "",
         producer: "",
@@ -25,7 +25,7 @@ const AddMovies = () => {
         setFormData({...formData, [e.target.name]: e.target.value})
     }
     
-    const handleSubmit = (e) => { //Occurs when the save button is pressed
+    const handleSubmit = async (e) => { //Occurs when the save button is pressed
         e.preventDefault();
 
         const newMovie = { title: formData.title, trailerVideo: formData.trailerVideo, moviePoster: formData.moviePoster,
@@ -43,24 +43,15 @@ const AddMovies = () => {
             alert("Please enter a valid trailer link (must start with http:// or https://).");
             return;
         }
-        saveMovie(newMovie); 
+        
+        const res = await MovieRequests.saveMovie(newMovie);
+        if (res) {
+            setSuccessMessage(res.message);
+            setTimeout(() => {navigate("/admin-movies")}, 2000); 
+        }          
     };
 
-    const saveMovie = async (newMovie) => { //Sends information to the backend 
-        try {
-            const response = await axios.post("http://localhost:5000/save-movie", newMovie)
-            setSuccessMessage(response.data.message);
-            setTimeout(() => {
-                navigate("/admin-movies");
-              }, 2000);
-        } catch (error) {
-            if (error.response && error.response.status === 400) {
-                alert(error.response.data.message)
-            } else {
-                alert("An error occurred. Please try again later.");
-            }
-        }
-    }
+    
 
     return (  
         <div className="addmovies-container">

@@ -66,9 +66,9 @@
 /* Button Group */
 .button-group {
   display: flex;
-  justify-content: space-between;
-  gap: 15px;
+  gap: 10px;
   margin-top: 30px;
+  justify-content: space-between;
 }
 
 /* Buttons */
@@ -107,17 +107,20 @@
   background-color: #e9ecef;
 }
 
-.edit-button {
+.button-add {
   background-color: #FFD700;
   color: black;
   padding: 12px 24px;
   border: none;
   border-radius: 4px;
-  font-size: 16px;
   cursor: pointer;
   transition: background-color 0.2s;
+  width: auto;
+  white-space: nowrap; /* add this line */
 }
-
+.button-save:hover {
+  background-color: #e9ecef;
+}
 .card {
   background-color: rgb(191, 183, 183);
   padding: 10px 16px;

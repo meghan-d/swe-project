@@ -103,7 +103,7 @@ export default function Navbar({ movies, setFilteredMovies }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
-
+  const [showDropdown, setShowDropdown] = useState(false);
   useEffect(() => {
     const user = sessionStorage.getItem("user");
     setIsLoggedIn(!!user);
@@ -160,31 +160,36 @@ export default function Navbar({ movies, setFilteredMovies }) {
         {/* Buttons */}
         <div className="navbar-buttons">
           {isLoggedIn ? (
-            <>
-              <button className="navbar-btn" onClick={() => {
+          <>
+            <div className="dropdown">
+              <button className="navbar-btn" onClick={() => setShowDropdown(prev => !prev)}>
+                My Account ▾
+              </button>
+              {showDropdown && (
+              <div className="dropdown-menu">
+                <button className="dropdown-item" onClick={() => {
                   const user = JSON.parse(sessionStorage.getItem('user'));
                   if (user && user.id) {
                     navigate(`/edit-profile?userId=${user.id}`);
                   } else {
                     toast.error("You need to be logged in to edit your profile.");
                   }
-              }}
-            >
-              Edit Profile
-            </button>
-              <button className="navbar-btn logout" onClick={handleLogout}>
-                Log Out
-              </button>
-            </>
+                }}>
+                  Edit Profile
+                </button>
+                <button 
+                  className="dropdown-item" 
+                  onClick={() => navigate("/order-history")}> Order History </button>
+              </div>
+              )}
+            </div>
+            <button className="navbar-btn logout" onClick={handleLogout}> Log Out </button>
+          </>
           ) : (
-            <>
-              <button className="navbar-btn" onClick={() => navigate("/register")}>
-                Sign Up
-              </button>
-              <button className="navbar-btn" onClick={() => navigate("/login")}>
-                Log In
-              </button>
-            </>
+          <>
+            <button className="navbar-btn" onClick={() => navigate("/register")}> Sign Up </button>
+            <button className="navbar-btn" onClick={() => navigate("/login")}> Log In </button>
+          </>
           )}
         </div>
       </div>

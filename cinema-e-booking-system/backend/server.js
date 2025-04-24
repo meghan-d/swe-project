@@ -6,7 +6,7 @@ import nodemailer from "nodemailer";
 import crypto from 'crypto';
 
 const app = express();
-const PORT = 5000;
+const PORT = 5001;
 
 // Enable CORS to allow frontend access
 app.use(cors());
@@ -594,67 +594,33 @@ const encryptValue = (value) => {
     encrypted += cipher.final("hex");
     return encrypted;
 };
-app.post("/update-card", async (req, res) => {
-    const { userId, oldCardNumber, newCardNumber, cardType, expirationDate, billingStreet, billingCity, billingState, billingZip } = req.body;
-    console.log("🔹 Received request to update card");
 
-    if (!userId || !oldCardNumber || !newCardNumber) {
-        return res.status(400).json({ error: "User ID, Old Card Number, and New Card Number are required." });
-    }
-
-    try {
-        // Encrypt values before querying and updating
-        const encryptedOldCardNumber = encryptValue(oldCardNumber); // Use this to find the existing card
-        const encryptedNewCardNumber = encryptValue(newCardNumber); // Use this to update card number
-        const encryptedCardType = encryptValue(cardType);
-        const encryptedExpirationDate = encryptValue(expirationDate);
-        const encryptedBillingStreet = encryptValue(billingStreet);
-        const encryptedBillingCity = encryptValue(billingCity);
-        const encryptedBillingState = encryptValue(billingState);
-        const encryptedBillingZip = encryptValue(billingZip);
-
-        // Ensure the card belongs to the user
-        const [existingCard] = await db.execute(
-            "SELECT * FROM paymentcard WHERE userID = ? AND cardNumber = ?",
-            [userId, encryptedOldCardNumber]
-        );
-
-        if (existingCard.length === 0) {
-            return res.status(404).json({ error: "Card not found or does not belong to user." });
-        }
-
-        // Update encrypted values, including the new card number
-        await db.execute(
-            `UPDATE paymentcard 
-            SET cardNumber = ?, 
-                cardType = ?, 
-                formatedExpirationDate = ?, 
-                billingStreet = ?, 
-                billingCity = ?, 
-                billingState = ?, 
-                billingZip = ? 
-            WHERE userID = ? AND cardNumber = ?`,
-            [
-                encryptedNewCardNumber, // Updating card number
-                encryptedCardType, 
-                encryptedExpirationDate, 
-                encryptedBillingStreet, 
-                encryptedBillingCity, 
-                encryptedBillingState, 
-                encryptedBillingZip, 
-                userId, 
-                encryptedOldCardNumber // Match old encrypted number
-            ]
-        );
-
-        res.json({ message: "Card updated successfully and securely." });
-
-    } catch (error) {
-        console.error("Error updating card:", error);
-        res.status(500).json({ error: "Internal server error." });
-    }
-});
-
+app.put('/update-card', async (req, res) => {
+    const { originalCardNumber, updatedCard } = req.body;
+    
+    // Find the card based on the original number (decrypted or matched securely)
+    const [card] = await db.query('SELECT * FROM paymentcard WHERE cardNumber = ?', [encryptValue(originalCardNumber)]);
+  
+    if (!card) return res.status(404).json({ message: "Card not found" });
+  
+    await db.query(`
+      UPDATE paymentcard
+      SET cardType = ?, cardNumber = ?, formatedExpirationDate = ?, billingStreet = ?, billingCity = ?, billingState = ?, billingZip = ?
+      WHERE cardNumber = ?
+    `, [
+      encryptValue(updatedCard.cardType),
+      encryptValue(updatedCard.cardNumber),
+      encryptValue(updatedCard.expirationDate),
+      encryptValue(updatedCard.billingStreet),
+      encryptValue(updatedCard.billingCity),
+      encryptValue(updatedCard.billingState),
+      encryptValue(updatedCard.billingZip),
+      encryptValue(originalCardNumber)
+    ]);
+    
+    res.status(200).json({ message: "Card updated successfully" });
+  });
+  
 //endpoint for adding movies - admin duty
 app.post("/save-movie", async (req, res) => {
     try {
@@ -680,6 +646,7 @@ app.post("/save-movie", async (req, res) => {
 app.delete("/movies/:id", async (req, res) => {
     try {
         const { id } = req.params;
+        await db.execute("DELETE FROM screening WHERE movieID = ?", [id]);
         await db.execute("DELETE FROM movies WHERE id = ?", [id]);
         res.json({ message: "Movie deleted successfully" });
     } catch (error) {
@@ -829,7 +796,7 @@ app.post("/addPromotion", async (req, res) => {
         mailOptions.text = `🎉 Hello! We have a new promotion just for you!
   
   Promo Code: ${promoCode}
-  Discount: ${discount}
+  Discount: ${discount} off
   Expires on: ${expirationDate}
   
   Use it while it lasts!`;
@@ -851,7 +818,6 @@ app.post("/addPromotion", async (req, res) => {
     }
   });
 
-
 app.get("/screening-details/:id", async (req, res) => {
     const { id } = req.params;
 
@@ -869,6 +835,44 @@ app.get("/screening-details/:id", async (req, res) => {
         res.status(500).json({ error: "Database error" });
     }
 });
+
+app.get("/api/promo/:code", async (req, res) => {
+    const { code } = req.params;
+  
+    try {
+      const [rows] = await db.query(
+        "SELECT * FROM promotions WHERE promoCode = ? AND expirationDate >= CURDATE()",
+        [code]
+      );
+  
+      if (!rows.length) return res.status(404).json({ message: "Invalid or expired promo code." });
+      res.json({ discount: rows[0].discount });
+    } catch (err) {
+      console.error("Promo fetch error:", err);
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+app.get("/bookings/:id", async (req,res) => {
+    const { id } = req.params;
+    try {
+
+    } catch (error) {
+        console.error("Error fetching user bookings:", error);
+        res.status(500).json({ message: "Server error" })
+    }
+  });
+
+app.get("/promotions", async (req, res) => {
+    try {
+        const [rows] = await db.execute("SELECT * FROM promotions"); 
+        res.json(rows);
+    } catch (error) {
+        console.error("Error fetching promotions:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);

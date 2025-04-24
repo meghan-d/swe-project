@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./AdminMovies.css";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import MovieRequests from "../facade/MovieRequests";
 
 const AdminMovies = () => {
   const navigate = useNavigate();
@@ -12,21 +12,17 @@ const AdminMovies = () => {
   }, []);
 
   const fetchMovies = async () => {
-    try {
-      const res = await axios.get("http://localhost:5000/movies"); // Fetch movies from backend
-      setMovies(res.data);
-    } catch (error) {
-      console.error("Error fetching movies:", error);
-    }
+      const res = await MovieRequests.getAllMovies();
+      if (res) {
+        setMovies(res);
+      }
   };
 
   const handleDeleteMovie = async (id) => {
-    try {
-      await axios.delete(`http://localhost:5000/movies/${id}`)
-      setMovies(movies.filter((movie) => movie.id !== id));
-    } catch (error) {
-      console.log("Problem deleting movie:", error);
-    }
+      const res = await MovieRequests.deleteMovie(id)
+      if (res) {
+        setMovies(movies.filter((movie) => movie.id !== id));
+      }
   };
 
   return (

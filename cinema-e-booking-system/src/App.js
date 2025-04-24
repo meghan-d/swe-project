@@ -20,6 +20,7 @@ import AddMovies from "./pages/AddMovies";
 import AdminScheduleMovies from "./pages/AdminScheduleMovies"
 import ScheduleMovie from "./pages/ScheduleMovie"
 import MovieDetails from "./pages/MovieDetails";
+import OrderHistory from "./pages/OrderHistory"
 
 const App = () => {
   return (
@@ -46,6 +47,7 @@ const App = () => {
         <Route path="/admin-schedule" element={<AdminScheduleMovies />} />
         <Route path="/schedule-movie" element={<ScheduleMovie />} />
         <Route path="/movie-details/:id" element={<MovieDetails />} />
+        <Route path="/order-history" element={<OrderHistory />} />
       </Routes>
     </Router>
   );

@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import { useState, useEffect } from "react";
+import MovieRequests from "../facade/MovieRequests";
 
 const MovieSelection = () => {
   const [filteredMovies, setFilteredMovies] = useState([]);
@@ -11,13 +11,11 @@ const MovieSelection = () => {
   }, []);
 
   const fetchMovies = async () => {
-    try {
-      const res = await axios.get("http://localhost:5000/movies"); // Fetch movies from backend
-      setFilteredMovies(res.data);
-    } catch (error) {
-      console.error("Error fetching movies:", error);
+    const res = await MovieRequests.getAllMovies();
+    if (res) {
+      setFilteredMovies(res);
     }
-  };
+  }
 
   const currentlyRunning = filteredMovies.filter(
     (movie) => movie.category === "Currently Running"

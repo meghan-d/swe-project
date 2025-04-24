@@ -14,14 +14,14 @@ const ResetPassword = () => {
   const handleResetPassword = async () => {
     try {
         // First, verify the reset code
-        const verificationResponse = await axios.post("http://localhost:5000/verify-reset-code", {
+        const verificationResponse = await axios.post("http://localhost:5001/verify-reset-code", {
             email,
             verificationCode
         });
 
         if (verificationResponse.data.message === "Verification successful. You can reset your password.") {
             // Now reset the password
-            const response = await axios.post("http://localhost:5000/reset-password", {
+            const response = await axios.post("http://localhost:5001/reset-password", {
                 email,
                 verificationCode,
                 newPassword

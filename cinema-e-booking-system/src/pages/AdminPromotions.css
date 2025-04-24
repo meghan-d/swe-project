@@ -102,4 +102,27 @@
     border-radius: 6px;
     cursor: pointer;
   }
+  .title-container {
+    position: relative; /* Allows absolute positioning inside */
+    display: flex;
+    justify-content: center; /* Centers title */
+    align-items: center;
+    position: relative; /* Ensures child elements can be positioned absolutely */
+    padding: 10px 0;
+  }
   
+  .admin-title {
+    text-align: center;
+    flex-grow: 1; /* Allows centering */
+  }
+  
+  .back-button {
+    position: absolute;
+    left: 80px; /* Move button to left */
+    color: #FFD700;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+  }
