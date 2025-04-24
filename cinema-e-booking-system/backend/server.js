@@ -16,9 +16,9 @@ app.use(express.json());
 const connectDB = async () => {
     try {
         const db = await mysql.createConnection({
-            host: "localhost",
+            host: "127.0.0.1",
             user: "root", // Update if your DB user is different
-            password: "Marmar3511@", // Update with your DB password
+            password: "newpassword", // Update with your DB password
             database: "cinema_ebooking"
         });
         console.log("Connected to database");

@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./Checkout.css";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "./Checkout.css";
 
 const Checkout = () => {
   const [payment, setPayment] = useState({ cardNumber: "", expiry: "" });
