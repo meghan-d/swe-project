@@ -18,7 +18,7 @@ const connectDB = async () => {
         const db = await mysql.createConnection({
             host: "127.0.0.1",
             user: "root", // Update if your DB user is different
-            password: "Marmar3511@", // Update with your DB password
+            password: "", // Update with your DB password
             database: "cinema_ebooking"
         });
         console.log("Connected to database");
@@ -872,6 +872,7 @@ app.get("/promotions", async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
+
 
 // Start the server
 app.listen(PORT, () => {
