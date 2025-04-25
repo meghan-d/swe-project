@@ -1,7 +1,7 @@
 import express from "express";
 import mysql from "mysql2/promise";
 import cors from "cors";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import nodemailer from "nodemailer";
 import crypto from 'crypto';
 
@@ -18,7 +18,7 @@ const connectDB = async () => {
         const db = await mysql.createConnection({
             host: "127.0.0.1",
             user: "root", // Update if your DB user is different
-            password: "", // Update with your DB password
+            password: "urmomspicklejar", // Update with your DB password
             database: "cinema_ebooking"
         });
         console.log("Connected to database");
