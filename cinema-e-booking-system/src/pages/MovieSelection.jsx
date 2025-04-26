@@ -2,9 +2,13 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import MovieRequests from "../facade/MovieRequests";
+import { useNavigate } from "react-router-dom"; 
+import { useBooking } from "../context/BookingContext";
 
 const MovieSelection = () => {
   const [filteredMovies, setFilteredMovies] = useState([]);
+  const { bookingData, setBookingData } = useBooking();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchMovies();
@@ -32,7 +36,14 @@ const MovieSelection = () => {
 
             <button
               className="bg-blue-500 text-white px-3 py-1 mt-2 rounded mr-2"
-              onClick={() => window.location.href = `/select-showtime/${movie.id}`}
+              onClick={() => {
+                setBookingData(prev => ({
+                  ...prev,
+                  movieID: movie.id,
+                  movieTitle: movie.title
+                }));
+                navigate(`/select-showtime/${movie.id}`);
+              }}
             >
               Book Movie
             </button>
