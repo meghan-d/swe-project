@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useBooking } from "../context/BookingContext";
 
 export default function OrderSummary() {
-    const { bookingData } = useBooking();
+    const { bookingData, setBookingData } = useBooking();
     const navigate = useNavigate();
 
     if (!bookingData.movieID || !bookingData.showtimeID || bookingData.seats.length === 0) {
@@ -20,7 +20,6 @@ export default function OrderSummary() {
         );
     }
 
-    // Pricing based on ticket type
     const getPrice = (ticketType) => {
         switch (ticketType) {
             case "Child":
@@ -28,13 +27,19 @@ export default function OrderSummary() {
             case "Senior":
             case "Military":
                 return 8;
-            case "Adult":
             default:
                 return 10;
         }
     };
 
     const totalPrice = bookingData.seats.reduce((sum, seat) => sum + getPrice(seat.ticketType), 0);
+
+    const handleDeleteSeat = (seatLabel) => {
+        setBookingData(prev => ({
+            ...prev,
+            seats: prev.seats.filter(seat => seat.seatLabel !== seatLabel)
+        }));
+    };
 
     return (
         <div className="p-6 shadow-md rounded-md border">
@@ -45,7 +50,7 @@ export default function OrderSummary() {
                 <h1 className="text-lg font-semibold">Movie Details</h1>
                 <p className="text-gray-800">{bookingData.movieTitle}</p>
                 <p className="text-gray-800">{bookingData.selectedDate}</p>
-                <p className="text-gray-800">{bookingData.showtimeTime}</p> {/* Show the TIME! */}
+                <p className="text-gray-800">{bookingData.showtimeTime}</p>
             </div>
 
             {/* Seats */}
@@ -53,8 +58,14 @@ export default function OrderSummary() {
                 <h2 className="text-lg font-semibold">Selected Seats</h2>
                 <ul className="text-gray-800">
                     {bookingData.seats.map((seat, index) => (
-                        <li key={index} className="flex gap-2 py-2">
-                            <span>{seat.seatLabel} ({seat.ticketType})</span>
+                        <li key={index} className="flex justify-between items-center py-2">
+                            <span>{seat.seatLabel} ({seat.ticketType}) - ${getPrice(seat.ticketType)}</span>
+                            <button
+                                onClick={() => handleDeleteSeat(seat.seatLabel)}
+                                className="bg-red-500 text-white px-2 py-1 rounded text-sm hover:bg-red-600"
+                            >
+                                Delete
+                            </button>
                         </li>
                     ))}
                 </ul>
@@ -63,13 +74,6 @@ export default function OrderSummary() {
             {/* Cost */}
             <div className="border-b pb-4 mb-4">
                 <h2 className="text-lg font-semibold">Cost</h2>
-                <ul className="text-gray-800">
-                    {bookingData.seats.map((seat, index) => (
-                        <li key={index}>
-                            {seat.ticketType}: ${getPrice(seat.ticketType)}
-                        </li>
-                    ))}
-                </ul>
                 <p className="text-gray-800 font-bold mt-2">Total: ${totalPrice}</p>
             </div>
 
@@ -97,3 +101,4 @@ export default function OrderSummary() {
         </div>
     );
 }
+
