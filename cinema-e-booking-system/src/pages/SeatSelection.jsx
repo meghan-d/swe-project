@@ -5,24 +5,37 @@ import { useBooking } from "../context/BookingContext";
 
 const SeatSelection = () => {
   const navigate = useNavigate();
-  const { bookingData, setBookingData } = useBooking();
+  const { setBookingData } = useBooking();
+
   const [selectedSeats, setSelectedSeats] = useState([]);
 
+  const getSeatLabel = (seat) =>
+    `${String.fromCharCode(65 + Math.floor(seat / 8))}${(seat % 8) + 1}`;
+
   const toggleSeat = (seat) => {
-    setSelectedSeats((prev) =>
-      prev.includes(seat) ? prev.filter((s) => s !== seat) : [...prev, seat]
-    );
+    setSelectedSeats((prev) => {
+      const exists = prev.find((s) => s.seat === seat);
+      if (exists) {
+        return prev.filter((s) => s.seat !== seat);
+      } else {
+        return [
+          ...prev,
+          {
+            seat,
+            seatLabel: getSeatLabel(seat),
+            ticketType: "Adult", // default initially
+          },
+        ];
+      }
+    });
   };
 
-  const handleTicketTypeChange = (seat, newTicketType) => {
-    setBookingData(prev => ({
-      ...prev,
-      seats: prev.seats.map(s =>
-        s.seatLabel === `${String.fromCharCode(65 + Math.floor(seat / 8))}${(seat % 8) + 1}`
-          ? { ...s, ticketType: newTicketType }
-          : s
+  const handleTicketTypeChange = (seat, newType) => {
+    setSelectedSeats((prev) =>
+      prev.map((s) =>
+        s.seat === seat ? { ...s, ticketType: newType } : s
       )
-    }));
+    );
   };
 
   const handleProceed = () => {
@@ -31,14 +44,9 @@ const SeatSelection = () => {
       return;
     }
 
-    const seatObjects = selectedSeats.map(seat => ({
-      seatLabel: `${String.fromCharCode(65 + Math.floor(seat / 8))}${(seat % 8) + 1}`,
-      ticketType: "Adult", // Default initially
-    }));
-
-    setBookingData(prev => ({
+    setBookingData((prev) => ({
       ...prev,
-      seats: seatObjects
+      seats: selectedSeats,
     }));
 
     navigate("/order-summary");
@@ -72,21 +80,20 @@ const SeatSelection = () => {
       {/* Seat Grid */}
       <div className="grid grid-cols-8 gap-3 max-w-3xl mx-auto">
         {[...Array(40)].map((_, i) => (
-          <button 
-            key={i} 
+          <button
+            key={i}
             onClick={() => toggleSeat(i)}
-            disabled={[3, 12, 25, 34].includes(i)} // Taken seats
+            disabled={[3, 12, 25, 34].includes(i)}
             className={`
               w-8 h-8 rounded-t-lg border
               ${[3, 12, 25, 34].includes(i)
                 ? "bg-gray-400 cursor-not-allowed"
-                : selectedSeats.includes(i)
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 hover:bg-gray-300"
-              }
+                : selectedSeats.find((s) => s.seat === i)
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200 hover:bg-gray-300"}
             `}
           >
-            {String.fromCharCode(65 + Math.floor(i / 8))}{(i % 8) + 1}
+            {getSeatLabel(i)}
           </button>
         ))}
       </div>
@@ -95,24 +102,23 @@ const SeatSelection = () => {
       <div className="mt-8 text-center">
         <p className="font-md mb-4">Selected Seats:</p>
         <div className="flex flex-col items-center">
-          {selectedSeats.map((seat) => {
-            const seatLabel = `${String.fromCharCode(65 + Math.floor(seat / 8))}${(seat % 8) + 1}`;
-            return (
-              <div key={seat} className="flex items-center gap-4 mb-2">
-                <span>{seatLabel}</span>
-                <select
-                  className="p-1 border rounded"
-                  defaultValue="Adult"
-                  onChange={(e) => handleTicketTypeChange(seat, e.target.value)}
-                >
-                  <option value="Adult">Adult - $10</option>
-                  <option value="Senior">Senior (60+) - $8</option>
-                  <option value="Military">Military - $8</option>
-                  <option value="Child">Child (12 and under) - $7</option>
-                </select>
-              </div>
-            );
-          })}
+          {selectedSeats.map(({ seat, seatLabel, ticketType }) => (
+            <div key={seat} className="flex items-center gap-4 mb-2">
+              <span>{seatLabel}</span>
+              <select
+                className="p-1 border rounded"
+                value={ticketType}
+                onChange={(e) =>
+                  handleTicketTypeChange(seat, e.target.value)
+                }
+              >
+                <option value="Adult">Adult - $10</option>
+                <option value="Senior">Senior (60+) - $8</option>
+                <option value="Military">Military - $8</option>
+                <option value="Child">Child (12 and under) - $7</option>
+              </select>
+            </div>
+          ))}
         </div>
 
         <button
