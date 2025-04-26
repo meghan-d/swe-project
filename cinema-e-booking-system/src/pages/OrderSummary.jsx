@@ -48,15 +48,15 @@ export default function OrderSummary() {
             {/* Movie Info */}
             <div className="border-b pb-4 mb-4">
                 <h1 className="text-lg font-semibold">Movie Details</h1>
-                <p className="text-gray-800">{bookingData.movieTitle}</p>
-                <p className="text-gray-800">{bookingData.selectedDate}</p>
-                <p className="text-gray-800">{bookingData.showtimeTime}</p>
+                <p className="text-gray-300">{bookingData.movieTitle}</p>
+                <p className="text-gray-300">{bookingData.selectedDate}</p>
+                <p className="text-gray-300">{bookingData.showtimeTime}</p>
             </div>
 
             {/* Seats */}
             <div className="border-b pb-4 mb-4">
                 <h2 className="text-lg font-semibold">Selected Seats</h2>
-                <ul className="text-gray-800">
+                <ul className="text-gray-300">
                     {bookingData.seats.map((seat, index) => (
                         <li key={index} className="flex justify-between items-center py-2">
                             <span>{seat.seatLabel} ({seat.ticketType}) - ${getPrice(seat.ticketType)}</span>
@@ -74,7 +74,7 @@ export default function OrderSummary() {
             {/* Cost */}
             <div className="border-b pb-4 mb-4">
                 <h2 className="text-lg font-semibold">Cost</h2>
-                <p className="text-gray-800 font-bold mt-2">Total: ${totalPrice}</p>
+                <p className="text-gray-300 font-bold mt-2">Total: ${totalPrice}</p>
             </div>
 
             {/* Action Buttons */}

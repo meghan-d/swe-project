@@ -87,10 +87,10 @@ const SeatSelection = () => {
             className={`
               w-8 h-8 rounded-t-lg border
               ${[3, 12, 25, 34].includes(i)
-                ? "bg-gray-400 cursor-not-allowed"
+                ? "bg-gray-400 cursor-not-allowed text-black"
                 : selectedSeats.find((s) => s.seat === i)
                 ? "bg-blue-500 text-white"
-                : "bg-gray-200 hover:bg-gray-300"}
+                : "bg-gray-200 hover:bg-gray-300 text-black"}
             `}
           >
             {getSeatLabel(i)}
@@ -99,8 +99,8 @@ const SeatSelection = () => {
       </div>
 
       {/* Selected Seats Summary */}
-      <div className="mt-8 text-center">
-        <p className="font-md mb-4">Selected Seats:</p>
+      <div className="mt-8 text-center text-black">
+        <p className="font-md mb-4 text-black">Selected Seats:</p>
         <div className="flex flex-col items-center">
           {selectedSeats.map(({ seat, seatLabel, ticketType }) => (
             <div key={seat} className="flex items-center gap-4 mb-2">

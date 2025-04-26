@@ -67,7 +67,7 @@ export default function ShowtimeSelection() {
                                         selectedShowtime.date === showtimeBlock.date &&
                                         selectedShowtime.time === timeBlock.time
                                             ? "bg-blue-500 text-white"
-                                            : "bg-gray-200"
+                                            : "bg-black"
                                     }`}
                                     onClick={() => handleSelectShowtime(showtimeBlock.date, timeBlock.time, timeBlock.showID)}
                                 >
