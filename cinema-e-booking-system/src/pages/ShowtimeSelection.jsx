@@ -40,12 +40,11 @@ export default function ShowtimeSelection() {
             return;
         }
 
-        // Save the selected showtime into BookingContext
         setBookingData(prev => ({
           ...prev,
           selectedDate: selectedShowtime.date,
           showtimeID: selectedShowtime.showID,
-          showtimeTime: selectedShowtime.time // <=== add this line
+          showtimeTime: selectedShowtime.time 
         }));
         
 
