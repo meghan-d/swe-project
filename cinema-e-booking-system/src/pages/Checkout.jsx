@@ -6,41 +6,79 @@ import PromotionRequests from "../facade/PromotionsRequests";
 import BookingRequests from "../facade/BookingRequests";
 import { useNavigate } from "react-router-dom";
 
-
 const Checkout = () => {
   const { bookingData } = useBooking();
   const navigate = useNavigate();
 
-  const [payment, setPayment] = useState({ cardNumber: "", expiry: "" });
+  const [payment, setPayment] = useState({
+    cardType: "",
+    cardNumber: "",
+    expiry: "",
+    billingStreet: "",
+    billingCity: "",
+    billingState: "",
+    billingZip: ""
+  });
+
   const [promoCode, setPromoCode] = useState("");
   const [discount, setDiscount] = useState(0);
   const [error, setError] = useState("");
   const [savedCards, setSavedCards] = useState([]);
 
+  const handleChange = (e) => {
+    setPayment({ ...payment, [e.target.name]: e.target.value });
+  };
+
+  const validateCheckout = () => {
+    if (!payment.cardType) {
+      alert("Please select a card type.");
+      return false;
+    }
+    if (!/^\d{16}$/.test(payment.cardNumber)) {
+      alert("Card number must be exactly 16 digits.");
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
+    if (!validateCheckout()) return;
+
     const userId = localStorage.getItem("userId");
-    const formattedDate = new Date(bookingData.selectedDate).toISOString().split('T')[0];
+    if (!bookingData.selectedDate) {
+      setError("No selected date for booking. Please select a date.");
+      return;
+    }
   
+    let formattedDate;
+    try {
+      formattedDate = new Date(bookingData.selectedDate).toISOString().split('T')[0];
+    } catch (error) {
+      console.error("Invalid booking date:", bookingData.selectedDate);
+      setError("Invalid date selected for booking.");
+      return;
+    }
+
     try {
       const res = await BookingRequests.saveBooking({
         userID: userId,
         bookingDate: formattedDate,
         showtimeID: bookingData.showtimeID,
         noOfTickets: bookingData.seats.length,
-        //totalPrice: bookingData.ticketPrice * bookingData.seats.length,
         totalPrice: discountedTotal
       });
-  
+
       if (res.message === "Booking saved successfully!") {
         const bookingInfo = {
-            movieTitle: bookingData.movieTitle, 
-            time: bookingData.showtimeTime,            
-            totalPrice: discountedTotal,
-            seats: bookingData.seats.map(seat => ({
-              seatLabel: seat.seatLabel
-        }))}
+          movieTitle: bookingData.movieTitle,
+          time: bookingData.showtimeTime,
+          totalPrice: discountedTotal,
+          seats: bookingData.seats.map(seat => ({
+            seatLabel: seat.seatLabel
+          }))
+        };
         localStorage.setItem("bookingInfo", JSON.stringify(bookingInfo));
         navigate("/order-confirmation");
       } else {
@@ -56,21 +94,17 @@ const Checkout = () => {
     const userId = localStorage.getItem("userId");
     if (userId) {
       ProfileRequests.getUserProfile(userId)
-      .then((res) => {
-        const card = res.paymentCards || [];
-        if (card) {
-          setSavedCards(card);
-        }
-      })
-      .catch((err) => {
-        console.error("Failed to fetch saved card:", err);
-      });
+        .then((res) => {
+          const card = res.paymentCards || [];
+          if (card) {
+            setSavedCards(card);
+          }
+        })
+        .catch((err) => {
+          console.error("Failed to fetch saved card:", err);
+        });
     }
   }, []);
-
-  const handleChange = (e) => {
-    setPayment({ ...payment, [e.target.name]: e.target.value });
-  };
 
   const handlePromoApply = async () => {
     try {
@@ -96,16 +130,14 @@ const Checkout = () => {
     });
   };
 
-  const baseTotal =
-    bookingData?.seats?.reduce((sum, seat) => sum + seat.getPrice(), 0) || 0;
-
+  const baseTotal = bookingData?.seats?.reduce((sum, seat) => sum + seat.getPrice(), 0) || 0;
   const discountedTotal = (baseTotal - baseTotal * (parseInt(discount) / 100)).toFixed(2);
 
   return (
     <form onSubmit={handleSubmit}>
       <div className="checkout-container">
         <h2 className="checkout-title">Checkout</h2>
-
+  
         <div className="checkout-section">
           <label>Use Saved Card:</label>
           <div className="savedcard-buttons">
@@ -127,17 +159,35 @@ const Checkout = () => {
             )}
           </div>
         </div>
-
+  
         <div className="checkout-section">
           <label>Card Type *</label>
-          <input type="text" name="cardType" value={payment.cardType || ""} onChange={handleChange} required />
+          <select
+            name="cardType"
+            value={payment.cardType || ""}
+            onChange={handleChange}
+            required
+            className="input"
+          >
+            <option value="">Select Card Type</option>
+            <option value="Visa">Visa</option>
+            <option value="MasterCard">MasterCard</option>
+            <option value="Discover">Discover</option>
+            <option value="American Express">American Express</option>
+          </select>
         </div>
-
+  
         <div className="checkout-section">
           <label>Card Number *</label>
-          <input type="text" name="cardNumber" value={payment.cardNumber || ""} onChange={handleChange} required />
+          <input
+            type="text"
+            name="cardNumber"
+            value={payment.cardNumber || ""}
+            onChange={handleChange}
+            required
+          />
         </div>
-
+  
         <div className="checkout-section">
           <label>Expiry Date *</label>
           <input
@@ -149,7 +199,7 @@ const Checkout = () => {
             required
           />
         </div>
-
+  
         <div className="address-row">
           <div className="address-section">
             <label>Billing Street *</label>
@@ -161,7 +211,7 @@ const Checkout = () => {
               required
             />
           </div>
-
+  
           <div className="address-section">
             <label>Billing City *</label>
             <input
@@ -173,7 +223,7 @@ const Checkout = () => {
             />
           </div>
         </div>
-
+  
         <div className="address-row">
           <div className="address-section">
             <label>Billing State *</label>
@@ -185,7 +235,7 @@ const Checkout = () => {
               required
             />
           </div>
-
+  
           <div className="address-section">
             <label>Billing Zip *</label>
             <input
@@ -197,33 +247,45 @@ const Checkout = () => {
             />
           </div>
         </div>
-
+  
         <div className="checkout-section promo-section">
           <label>Promo Code:</label>
-          <input type="text" value={promoCode} onChange={(e) => setPromoCode(e.target.value)} />
-          <button type="button" className="yellow-btn" onClick={handlePromoApply}>
+          <input
+            type="text"
+            value={promoCode}
+            onChange={(e) => setPromoCode(e.target.value)}
+          />
+          <button
+            type="button"
+            className="yellow-btn"
+            onClick={handlePromoApply}
+          >
             Apply
           </button>
         </div>
-
+  
         {error && <p className="error-text">{error}</p>}
-
+  
         <h3 className="checkout-total">
           Total: $
           {parseInt(discount) > 0
             ? `${discountedTotal} (Saved ${parseInt(discount)}%)`
             : baseTotal.toFixed(2)}
         </h3>
-
+  
         <div className="checkout-actions">
           <button className="green-btn">Confirm</button>
-          <button type="button" className="gray-btn" onClick={() => (window.location.href = "/")}>
+          <button
+            type="button"
+            className="gray-btn"
+            onClick={() => (window.location.href = "/")}
+          >
             Cancel
           </button>
         </div>
       </div>
     </form>
-  );
+  );  
 };
 
 export default Checkout;
