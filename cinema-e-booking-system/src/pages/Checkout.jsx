@@ -62,20 +62,8 @@ const Checkout = () => {
     });
   };
 
-  const getPrice = (ticketType) => {
-    switch (ticketType) {
-      case "Child":
-        return 7;
-      case "Senior":
-      case "Military":
-        return 8;
-      default:
-        return 10;
-    }
-  };
-
   const baseTotal =
-    bookingData?.seats?.reduce((sum, seat) => sum + getPrice(seat.ticketType), 0) || 0;
+    bookingData?.seats?.reduce((sum, seat) => sum + seat.getPrice(), 0) || 0;
 
   const discountedTotal = (baseTotal - baseTotal * (parseInt(discount) / 100)).toFixed(2);
 

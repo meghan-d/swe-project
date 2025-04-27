@@ -2,6 +2,7 @@ import "./SeatSelection.css";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useBooking } from "../context/BookingContext";
+import { TicketFactory } from "../factory/ticketFactory";
 
 const SeatSelection = () => {
   const navigate = useNavigate();
@@ -43,12 +44,16 @@ const SeatSelection = () => {
       alert("Please select at least one seat.");
       return;
     }
-
+  
+    const ticketObjects = selectedSeats.map(({ seatLabel, ticketType }) =>
+      TicketFactory(seatLabel, ticketType)
+    );
+  
     setBookingData((prev) => ({
       ...prev,
-      seats: selectedSeats,
+      seats: ticketObjects,
     }));
-
+  
     navigate("/order-summary");
   };
 
