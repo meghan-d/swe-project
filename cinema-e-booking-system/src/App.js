@@ -47,7 +47,7 @@ const App = () => {
         <Route path="/admin-schedule" element={<AdminScheduleMovies />} />
         <Route path="/schedule-movie" element={<ScheduleMovie />} />
         <Route path="/movie-details/:id" element={<MovieDetails />} />
-        <Route path="/order-history" element={<OrderHistory />} />
+        <Route path="/order-history/:id" element={<OrderHistory />} />
       </Routes>
     </Router>
   );

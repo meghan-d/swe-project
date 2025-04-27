@@ -179,7 +179,9 @@ export default function Navbar({ movies, setFilteredMovies }) {
                 </button>
                 <button 
                   className="dropdown-item" 
-                  onClick={() => navigate("/order-history")}> Order History </button>
+                  onClick={() => {
+                  const user = JSON.parse(sessionStorage.getItem('user'));
+                  navigate(`/order-history/${user.id}`)}}> Order History </button>
               </div>
               )}
             </div>

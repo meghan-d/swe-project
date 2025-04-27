@@ -22,11 +22,12 @@ export default function OrderSummary() {
   }
 
   const totalPrice = bookingData.seats.reduce((sum, seat) => sum + seat.getPrice(), 0);
-
+  console.log(totalPrice);
   const handleDeleteSeat = (seatLabel) => {
     setBookingData(prev => ({
       ...prev,
-      seats: prev.seats.filter(seat => seat.seatLabel !== seatLabel)
+      seats: prev.seats.filter(seat => seat.seatLabel !== seatLabel),
+      totalPrice: totalPrice
     }));
   };
 

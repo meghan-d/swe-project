@@ -29,10 +29,19 @@ const Checkout = () => {
         bookingDate: formattedDate,
         showtimeID: bookingData.showtimeID,
         noOfTickets: bookingData.seats.length,
-        totalPrice: bookingData.ticketPrice * bookingData.seats.length,
+        //totalPrice: bookingData.ticketPrice * bookingData.seats.length,
+        totalPrice: discountedTotal
       });
   
       if (res.message === "Booking saved successfully!") {
+        const bookingInfo = {
+            movieTitle: bookingData.movieTitle, 
+            time: bookingData.showtimeTime,            
+            totalPrice: discountedTotal,
+            seats: bookingData.seats.map(seat => ({
+              seatLabel: seat.seatLabel
+        }))}
+        localStorage.setItem("bookingInfo", JSON.stringify(bookingInfo));
         navigate("/order-confirmation");
       } else {
         setError("Failed to save booking. Please try again.");

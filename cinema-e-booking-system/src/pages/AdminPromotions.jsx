@@ -16,8 +16,11 @@ const AdminPromotions = () => {
     }, []);
 
   const handleAddPromotion = async () => {
-    if (!promoCode.trim() || !discount.trim() || !expirationDate.trim()) return;
-
+    //if (!promoCode.trim() || !discount.trim() || !expirationDate.trim()) return;
+    if (!promoCode.trim() || !discount.trim() || !expirationDate.trim()) {
+      alert("Please fill in all fields!");
+      return;
+    }
     const newPromo = {promoCode, discount, expirationDate};
   
     const res = await PromotionsRequests.addPromotion(newPromo);
@@ -76,6 +79,7 @@ const AdminPromotions = () => {
           value={promoCode}
           onChange={(e) => setPromoCode(e.target.value)}
           className="promo-input"
+          required
         />
         <input
           type="text"
@@ -83,6 +87,7 @@ const AdminPromotions = () => {
           value={discount}
           onChange={(e) => setDiscount(e.target.value)}
           className="promo-input"
+          required
         />
         <input
           type="date"
@@ -90,6 +95,7 @@ const AdminPromotions = () => {
           value={expirationDate}
           onChange={(e) => setExpirationDate(e.target.value)}
           className="promo-input"
+          required
         />
         <button className="add-promo" onClick={handleAddPromotion}>➕ Add Promotion</button>
       </div>

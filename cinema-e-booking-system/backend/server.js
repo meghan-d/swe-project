@@ -891,6 +891,87 @@ app.post("/booking", async (req, res) => {
     }
 });
   
+app.get("/order-history/:id", async (req, res) => {
+    const { id } = req.params;
+    console.log("Getting order history for user ID:", id);
+    try {
+        // Adjust the query to join the showtime table and select the time
+        const [orders] = await db.query(`
+            SELECT booking.*, movies.title AS movie, showtimes.timestamp
+            FROM booking
+            JOIN screening ON booking.showtimeID = screening.showID
+            JOIN movies ON screening.movieID = movies.id
+            JOIN showtimes ON screening.showtimeID = showtimes.showtimeID
+            WHERE booking.userID = ?`, [id]
+        );
+
+        console.log("Fetched orders:", orders);
+        res.status(200).json(orders); // Respond with orders including the time
+    } catch (error) {
+        console.error("Error fetching order history:", error);
+        res.status(500).json({ message: "Error fetching order history" });
+    }
+});
+
+app.post('/send-confirmation', async (req, res) => {
+    const { orderDetails, email } = req.body;
+  
+    if (!orderDetails) {
+      return res.status(400).json({ message: "Missing order details" });
+    }
+  
+    const seatLabels = orderDetails.seats.map(seat => seat.seatLabel).join(", ");
+  
+    const mailOptions = {
+      from: "marlym2882@gmail.com",
+      to: email,
+      subject: "🎟️ Your Movie Order Confirmation",
+      html: `
+        <div style="text-align: center; padding: 30px; background: #f4f4f9; min-height: 100vh; font-family: Arial, sans-serif;">
+          <h1 style="color: #28a745; font-size: 28px; margin-bottom: 20px;">🎉 Your Order is Confirmed! 🎉</h1>
+  
+          <p style="font-size: 18px; color: #333; margin-bottom: 20px;">
+            Thank you for your purchase! We hope you enjoy your movie experience. 🍿
+          </p>
+  
+          <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); max-width: 600px; margin: 0 auto;">
+            <h2>Order Details</h2>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+              <thead>
+                <tr>
+                  <th style="background-color: #007bff; color: white; border: 1px solid #ddd; padding: 12px;">Movie</th>
+                  <th style="background-color: #007bff; color: white; border: 1px solid #ddd; padding: 12px;">Showtime</th>
+                  <th style="background-color: #007bff; color: white; border: 1px solid #ddd; padding: 12px;">Seats</th>
+                  <th style="background-color: #007bff; color: white; border: 1px solid #ddd; padding: 12px;">Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="border: 1px solid #ddd; padding: 12px; text-align: center;">${orderDetails.movieTitle}</td>
+                  <td style="border: 1px solid #ddd; padding: 12px; text-align: center;">${orderDetails.time}</td>
+                  <td style="border: 1px solid #ddd; padding: 12px; text-align: center;">${seatLabels}</td>
+                  <td style="border: 1px solid #ddd; padding: 12px; text-align: center;">$${orderDetails.totalPrice}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+  
+          <p style="font-size: 20px; color: #333; margin-top: 20px; font-weight: bold;">
+            🎬 Sit back, relax, and enjoy the show! 🎬
+          </p>
+        </div>
+      `
+    };
+  
+    try {
+      await transporter.sendMail(mailOptions);
+      console.log("Confirmation email sent!");
+      res.status(200).json({ message: "Email sent" });
+    } catch (error) {
+      console.error("Error sending email:", error);
+      res.status(500).json({ message: "Failed to send email" });
+    }
+  });
 
 
 // Start the server

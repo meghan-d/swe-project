@@ -1,18 +1,44 @@
-import React from 'react';
-import { useBooking } from "../context/BookingContext";
+import React, { useEffect, useState } from 'react';
+import {useNavigate } from 'react-router-dom';
+import BookingRequests from '../facade/BookingRequests';
 
 const OrderConfirmation = () => {
+  const [orderDetails, setOrderDetails] = useState(null);
+  const navigate = useNavigate();
 
-  const { bookingData, setBookingData } = useBooking();
+  useEffect(() => {
+    const storedDetails = localStorage.getItem("bookingInfo");
+    if (storedDetails) {
+      const parsedDetails = JSON.parse(storedDetails);
+      console.log(parsedDetails)
+      setOrderDetails(parsedDetails);
 
-  const totalPrice = bookingData.seats.reduce((sum, seat) => sum + seat.getPrice(), 0);
-  
+      // Send email when orderDetails loaded
+      sendConfirmationEmail(parsedDetails);
+    }
+  }, []);
+
+  const sendConfirmationEmail = async (details) => {
+    const user = sessionStorage.getItem("user");
+    const parsedUser = JSON.parse(user);
+
+    const res = BookingRequests.sendBookingConfirmation(details, parsedUser.email);
+    if (res) {
+      console.log("Confirmation Email Sent!");
+    }
+  };
+
+  if (!orderDetails) {
+    return <div className="p-6 text-center">Loading confirmation...</div>;
+  }
+
+  const seatLabels = orderDetails.seats.map(seat => seat.seatLabel).join(", ");
   return (
     <div className="order-confirmation-container">
       <h1>🎉 Your Order is Confirmed! 🎉</h1>
-      
+
       <p className="thank-you-message">Thank you for your purchase! We hope you enjoy your movie experience. 🍿</p>
-      
+
       <div className="order-details">
         <h2>Order Details</h2>
         <table>
@@ -26,25 +52,19 @@ const OrderConfirmation = () => {
           </thead>
           <tbody>
             <tr>
-              <td>{bookingData.movieTitle}</td>
-              <td>{bookingData.selectedDate}, {bookingData.showtimeTime}</td>
-              <td>
-                {bookingData.seats.map((seat, index) => (
-                <span key={index}>
-                {seat.seatLabel} ({seat.type})
-                {index !== bookingData.seats.length - 1 && ", "}
-                </span>
-                ))}
-              </td>
-              <td>{totalPrice}</td>
+              <td>{orderDetails.movieTitle}</td>
+              <td>{orderDetails.time}</td>
+              <td>{seatLabels}</td>
+              <td>${orderDetails.totalPrice}</td>
             </tr>
           </tbody>
         </table>
       </div>
-      
+
       <p className="enjoy-message">🎬 Sit back, relax, and enjoy the show! 🎬</p>
-      
-      <style>{`
+      <button className="button" onClick={() => navigate("/")}>Go to Homepage</button>  {/* Button to go back to homepage */}
+
+      <style jsx>{`
         .order-confirmation-container {
           text-align: center;
           padding: 30px;
@@ -89,6 +109,12 @@ const OrderConfirmation = () => {
           color: #333;
           margin-top: 20px;
           font-weight: bold;
+        }
+        .button {
+          background-color: #007bff;
+          padding: '10px 20px';
+          fontSize: '16px';
+          color: 'white';
         }
       `}</style>
     </div>

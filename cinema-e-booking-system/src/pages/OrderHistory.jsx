@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./OrderHistory.css";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
+import BookingRequests from "../facade/BookingRequests";
 
 const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
@@ -9,13 +9,14 @@ const OrderHistory = () => {
   const { id } = useParams();
 
   useEffect(() => {
-    const savedUsers = JSON.parse(localStorage.getItem("adminUsers")) || [];
-    setOrders(savedUsers);
-  }, []);
-
-  const fetchBookings = async () => {
-    const res = await axios.get(`http://localhost:5001/bookings/${id}`)
-  }
+    const fetchOrders = async () => {
+      const res = await BookingRequests.getBookingHistory(id);
+      if (res) {
+        setOrders(res);
+      }
+    };
+    fetchOrders();
+  }, [id]);
 
   return (
     <div className="order-history-container">
@@ -24,15 +25,17 @@ const OrderHistory = () => {
       <div className="history-table">
         <div className="table-header">
           <span>Movie</span>
-          <span>Date</span>
-          <span>Time</span>
+          <span>Movie Date</span>
+          <span>Movie Time</span>
           <span>Order Total</span>
         </div>
+
         {orders.map((order, index) => (
           <div key={index} className="table-row">
-            <span>{order.name}</span>
-            <span>{order.email}</span>
-            <span>{order.role}</span>
+            <span>{order.movie}</span>
+            <span>{new Date(order.bookingDate).toLocaleDateString()}</span>
+            <span>{order.timestamp}</span>
+            <span>${order.totalPrice.toFixed(2)}</span>
           </div>
         ))}
       </div>
