@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { useBooking } from "../context/BookingContext";
 import "./Checkout.css";
+import ProfileRequests from "../facade/ProfileRequests";
+import PromotionRequests from "../facade/PromotionsRequests";
 
 const Checkout = () => {
   const { bookingData } = useBooking();
@@ -20,17 +21,16 @@ const Checkout = () => {
   useEffect(() => {
     const userId = localStorage.getItem("userId");
     if (userId) {
-      axios
-        .get(`http://localhost:5001/edit-profile?userId=${userId}`)
-        .then((res) => {
-          const card = res.data.paymentCards || [];
-          if (card) {
-            setSavedCards(card);
-          }
-        })
-        .catch((err) => {
-          console.error("Failed to fetch saved card:", err);
-        });
+      ProfileRequests.getUserProfile(userId)
+      .then((res) => {
+        const card = res.paymentCards || [];
+        if (card) {
+          setSavedCards(card);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to fetch saved card:", err);
+      });
     }
   }, []);
 
@@ -40,8 +40,8 @@ const Checkout = () => {
 
   const handlePromoApply = async () => {
     try {
-      const res = await axios.get(`http://localhost:5001/api/promo/${promoCode}`);
-      setDiscount(res.data.discount);
+      const res = await PromotionRequests.applyPromotion(promoCode);
+      setDiscount(res.discount);
       setError("");
     } catch (err) {
       setDiscount(0);

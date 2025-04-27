@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./AdminMovies.css";
 import { useNavigate } from "react-router-dom";
 import MovieRequests from "../facade/MovieRequests";
-import MovieAdapter from "../adapters/MovieAdapter"; 
+import MovieAdapter from "../adapter/MovieAdapter"; 
 
 const AdminMovies = () => {
   const navigate = useNavigate();

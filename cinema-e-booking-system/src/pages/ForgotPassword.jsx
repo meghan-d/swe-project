@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import "./ForgotPassword.css";
 import { FaEnvelope, FaKey } from "react-icons/fa";  
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import VerificationRequests from "../facade/VerificationRequests";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -10,28 +10,26 @@ const ForgotPassword = () => {
   const [step, setStep] = useState(1); // Step 1: Enter Email, Step 2: Enter Code & New Password
   const navigate = useNavigate();
 
-  const handleSendCode = () => {
-    axios.post("http://localhost:5001/send-reset-code", { email })
-      .then(res => {
+  const handleSendCode = async () => {
+      try {
+        await VerificationRequests.sendResetCode(email);
         alert("Verification code sent to your email!");
         setStep(2); // Move to verification step
-      })
-      .catch(err => {
+      } catch (err) {
         console.error("Error sending code:", err);
         alert("Error sending verification code.");
-      });
+      }
   };
 
-  const handleVerifyCode = () => {
-    axios.post("http://localhost:5001/verify-reset-code", { email, verificationCode })
-      .then(res => {
-        alert("Code verified! Redirecting to reset password page.");
-        navigate("/reset-password"); 
-      })
-      .catch(err => {
-        console.error("Error verifying code:", err);
-        alert("Invalid verification code.");
-      });
+  const handleVerifyCode = async () => {
+    try {
+      await VerificationRequests.verifyResetCode(email, verificationCode);
+      alert("Code verified! Redirecting to reset password page.");
+      navigate("/reset-password"); 
+    } catch (err) {
+      console.error("Error sending code:", err);
+      alert("Error sending verification code.");
+    }
   };
 
   return (

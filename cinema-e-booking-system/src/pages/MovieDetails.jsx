@@ -3,7 +3,9 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import './MovieDetails.css';
 import { useBooking } from "../context/BookingContext";
-import MovieAdapter from "../adapters/MovieAdapter"; 
+import MovieAdapter from "../adapter/MovieAdapter"; 
+import MovieRequests from "../facade/MovieRequests";
+import ScreeningRequests from "../facade/ScreeningRequests";
 
 const MovieDetails = () => {
   const { id } = useParams();
@@ -13,22 +15,23 @@ const MovieDetails = () => {
   const { setBookingData } = useBooking();
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:5001/movie-details/${id}`)
-      .then((res) => {
-        const adaptedMovie = MovieAdapter.adapt(res.data); 
+    const fetchMovieDetails = async () => {
+      try {
+        const res = await MovieRequests.getMovieById(id);
+        const adaptedMovie = MovieAdapter.adapt(res); 
         setMovie(adaptedMovie);
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error("Error fetching movie details:", err);
-      });
+      }
+    };
+    fetchMovieDetails();
   }, [id]);
 
   useEffect(() => {
     const fetchScreenings = async () => {
       try {
-        const res = await axios.get(`http://localhost:5001/screening-details/${id}`);
-        const groupedShowtimes = res.data.reduce((dateblock, show) => {
+        const res = await ScreeningRequests.getScreeningById(id);
+        const groupedShowtimes = res.reduce((dateblock, show) => {
           const formattedDate = new Date(show.date).toDateString();
           if (!dateblock[formattedDate]) {
             dateblock[formattedDate] = { id: show.showID, date: formattedDate, times: [] };

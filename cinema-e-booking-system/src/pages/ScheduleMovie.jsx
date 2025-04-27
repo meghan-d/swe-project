@@ -1,8 +1,10 @@
 import React, { useState, useEffect} from "react";
 import "./ScheduleMovie.css";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import MovieRequests from "../facade/MovieRequests";
+import ScreeningRequests from "../facade/ScreeningRequests";
+import AuditoriumRequests from "../facade/AuditoriumRequests";
+import ShowtimesRequests from "../facade/ShowtimesRequests";
 
 const ScheduleMovies = () => {
     const navigate = useNavigate();
@@ -48,8 +50,8 @@ const ScheduleMovies = () => {
 
     const saveShowing = async (showing) => {
         try {
-            const response = await axios.post("http://localhost:5001/save-showing", showing)
-            setSuccessMessage(response.data.message);
+            const response = await ScreeningRequests.saveShowing(showing);
+            setSuccessMessage(response.message);
             setTimeout(() => {
                 navigate("/admin-schedule");
               }, 2000);
@@ -70,35 +72,29 @@ const ScheduleMovies = () => {
     };
 
     const fetchAuditoriums = async () => {
-        try {
-            const response = await axios.get("http://localhost:5001/auditoriums");
-            console.log("Fetched Auditoriums:", response.data);
-            setAuditoriums(response.data);
-        } catch (error) {
-            console.error("Error fetching movies:", error);
-        }
+       const res = await AuditoriumRequests.fetchAuditoriums();
+       if (res) {
+        setAuditoriums(res);
+       }
     };
     const fetchShowtimes = async () => {
-        try {
-            const response = await axios.get("http://localhost:5001/showtimes");
-            console.log("Fetched showtimes:", response.data);
-            
-            setShowtimes(response.data);
-        } catch (error) {
-            console.error("Error fetching showtimes:", error);
-        }
+       const res = await ShowtimesRequests.getShowtimes();
+       if (res) {
+        setShowtimes(res);
+       }
     };
 
 //added these
     const fetchBookedShowings = async (auditorium, date) => {
         try {
-          const response = await axios.get(`http://localhost:5001/booked-times/${auditorium}/${date}`);
+          //const response = await axios.get(`http://localhost:5001/booked-times/${auditorium}/${date}`);
+          const res = await ScreeningRequests.bookedShowings(auditorium, date);
           //console.log("Fetched Booked Showings:", response.data);
-          setBookedShowings(response.data); // Set booked showings
+          setBookedShowings(res); // Set booked showings
         } catch (error) {
           console.error("Error fetching booked showings:", error);
         }
-      };
+    };
     
       // Function to check if the showtime is already booked
       const isShowtimeBooked = (showtimeId) => {

@@ -1,5 +1,5 @@
 import MovieCard from "./MovieCard";
-import MovieAdapter from "../adapters/MovieAdapter";
+import MovieAdapter from "../adapter/MovieAdapter";
 
 export default function MovieList({ title, allowToBook, movies }) {
     const adaptedMovies = MovieAdapter.adaptList(movies); 

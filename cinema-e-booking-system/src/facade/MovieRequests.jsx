@@ -12,10 +12,11 @@ const MovieRequests = {
 
     getMovieById: async (id) => {
         try {
-            const response = await axios.get(`http://localhost:5001/movies/${id}`);
+            const response = await axios.get(`http://localhost:5001/movie-details/${id}`);
             return response.data;
         } catch (error) {
             console.error("Error fetching movie:", error);
+            throw error;
         }
     },
 
