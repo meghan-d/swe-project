@@ -2,20 +2,22 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import './MovieDetails.css';
-import { useBooking } from "../context/BookingContext"; // ✅ Added this
+import { useBooking } from "../context/BookingContext";
+import MovieAdapter from "../adapters/MovieAdapter"; 
 
 const MovieDetails = () => {
   const { id } = useParams();
   const [movie, setMovie] = useState(null);
   const [showtimes, setShowtimes] = useState([]);
   const navigate = useNavigate();
-  const { setBookingData } = useBooking(); // ✅ Added this
+  const { setBookingData } = useBooking();
 
   useEffect(() => {
     axios
       .get(`http://localhost:5001/movie-details/${id}`)
       .then((res) => {
-        setMovie(res.data);
+        const adaptedMovie = MovieAdapter.adapt(res.data); 
+        setMovie(adaptedMovie);
       })
       .catch((err) => {
         console.error("Error fetching movie details:", err);
@@ -51,7 +53,7 @@ const MovieDetails = () => {
           <h1 className="movie-title">{movie.title}</h1>
           <div className="movie-poster-wrapper">
             <img
-              src={movie.trailer_picture || "/default-poster.jpg"}
+              src={movie.trailerPicture || "/default-poster.jpg"}
               alt={movie.title}
               className="movie-poster"
             />
@@ -66,10 +68,9 @@ const MovieDetails = () => {
                 className="book-button"
                 onClick={() => {
                   if (sessionStorage.getItem("user") != null) {
-                    // ✅ Save movie info into booking context before navigating
                     setBookingData(prev => ({
                       ...prev,
-                      movieID: movie.id,
+                      movieID: movie.movieId, 
                       movieTitle: movie.title,
                     }));
 
@@ -88,14 +89,14 @@ const MovieDetails = () => {
             <p><strong>Director:</strong> {movie.director}</p>
             <p><strong>Producer:</strong> {movie.producer}</p>
             <p><strong>Cast:</strong> {movie.cast}</p>
-            <p><strong>Rating:</strong> {movie.mpaa_rating}</p>
+            <p><strong>Rating:</strong> {movie.mpaaRating}</p> 
             <p><strong>Synopsis:</strong> {movie.synopsis}</p>
           </div>
 
-          {movie.trailer_video && (
-            movie.trailer_video.includes("youtube") ? (
+          {movie.trailerVideo && ( 
+            movie.trailerVideo.includes("youtube") ? (
               <iframe
-                src={`${movie.trailer_video}&autoplay=1&mute=1`}
+                src={`${movie.trailerVideo}&autoplay=1&mute=1`}
                 title="Trailer"
                 className="w-full aspect-video mt-4 rounded"
                 allowFullScreen
@@ -105,7 +106,7 @@ const MovieDetails = () => {
               <video
                 className="movie-trailer"
                 controls
-                src={movie.trailer_video}
+                src={movie.trailerVideo}
               />
             )
           )}
