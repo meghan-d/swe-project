@@ -4,6 +4,7 @@ import { useBooking } from "../context/BookingContext";
 
 export default function OrderSummary() {
   const { bookingData, setBookingData } = useBooking();
+
   const navigate = useNavigate();
 
   if (!bookingData.movieID || !bookingData.showtimeID || bookingData.seats.length === 0) {

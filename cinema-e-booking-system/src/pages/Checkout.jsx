@@ -3,9 +3,13 @@ import { useBooking } from "../context/BookingContext";
 import "./Checkout.css";
 import ProfileRequests from "../facade/ProfileRequests";
 import PromotionRequests from "../facade/PromotionsRequests";
+import BookingRequests from "../facade/BookingRequests";
+import { useNavigate } from "react-router-dom";
+
 
 const Checkout = () => {
   const { bookingData } = useBooking();
+  const navigate = useNavigate();
 
   const [payment, setPayment] = useState({ cardNumber: "", expiry: "" });
   const [promoCode, setPromoCode] = useState("");
@@ -13,9 +17,30 @@ const Checkout = () => {
   const [error, setError] = useState("");
   const [savedCards, setSavedCards] = useState([]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    window.location.href = "/order-confirmation";
+  
+    const userId = localStorage.getItem("userId");
+    const formattedDate = new Date(bookingData.selectedDate).toISOString().split('T')[0];
+  
+    try {
+      const res = await BookingRequests.saveBooking({
+        userID: userId,
+        bookingDate: formattedDate,
+        showtimeID: bookingData.showtimeID,
+        noOfTickets: bookingData.seats.length,
+        totalPrice: bookingData.ticketPrice * bookingData.seats.length,
+      });
+  
+      if (res.message === "Booking saved successfully!") {
+        navigate("/order-confirmation");
+      } else {
+        setError("Failed to save booking. Please try again.");
+      }
+    } catch (err) {
+      console.error("Error during booking submission:", err);
+      setError("Booking failed. Please try again.");
+    }
   };
 
   useEffect(() => {

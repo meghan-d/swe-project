@@ -873,6 +873,25 @@ app.get("/promotions", async (req, res) => {
     }
 });
 
+app.post("/booking", async (req, res) => {
+    try {
+      const { userID, bookingDate, showtimeID, noOfTickets, totalPrice } = req.body;
+
+      console.log("Received booking:", req.body);
+  
+      await db.execute(`
+        INSERT INTO booking (userID, bookingDate, showtimeID, noOfTickets, totalPrice)
+        VALUES (?, ?, ?, ?, ?)
+      `, [userID, bookingDate, showtimeID, noOfTickets, totalPrice]);
+  
+      res.json({ message: "Booking saved successfully!" });
+    } catch (error) {
+      console.error("Error saving booking:", error);
+      res.status(500).json({ message: "Server error saving booking" });
+    }
+});
+  
+
 
 // Start the server
 app.listen(PORT, () => {

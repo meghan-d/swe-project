@@ -1,6 +1,12 @@
 import React from 'react';
+import { useBooking } from "../context/BookingContext";
 
 const OrderConfirmation = () => {
+
+  const { bookingData, setBookingData } = useBooking();
+
+  const totalPrice = bookingData.seats.reduce((sum, seat) => sum + seat.getPrice(), 0);
+  
   return (
     <div className="order-confirmation-container">
       <h1>🎉 Your Order is Confirmed! 🎉</h1>
@@ -20,10 +26,17 @@ const OrderConfirmation = () => {
           </thead>
           <tbody>
             <tr>
-              <td>Inception</td>
-              <td>7:00 PM</td>
-              <td>A3, A4</td>
-              <td>$20</td>
+              <td>{bookingData.movieTitle}</td>
+              <td>{bookingData.selectedDate}, {bookingData.showtimeTime}</td>
+              <td>
+                {bookingData.seats.map((seat, index) => (
+                <span key={index}>
+                {seat.seatLabel} ({seat.type})
+                {index !== bookingData.seats.length - 1 && ", "}
+                </span>
+                ))}
+              </td>
+              <td>{totalPrice}</td>
             </tr>
           </tbody>
         </table>
@@ -31,7 +44,7 @@ const OrderConfirmation = () => {
       
       <p className="enjoy-message">🎬 Sit back, relax, and enjoy the show! 🎬</p>
       
-      <style jsx>{`
+      <style>{`
         .order-confirmation-container {
           text-align: center;
           padding: 30px;
