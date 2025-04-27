@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./Registration.css";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import RegistrationRequest from "../facade/RegistrationRequests";
 
 const Registration = () => {
   const [formData, setFormData] = useState({
@@ -74,19 +74,12 @@ const Registration = () => {
   
   //sends a users data to the backend
   const saveUserToAdmin = async (newUser) => {
-    try {
-      await axios.post("http://localhost:5001/register", newUser) // Send a POST request to your backend
+    const res = await RegistrationRequest.registerUser(newUser);
+    if (res) {
       setTimeout(() => {
         navigate("/registration-confirm");
       }, 2000);
       setIsSubmitting(true);
-    } catch (error) {
-      if (error.response && error.response.status === 400) {
-        // Show an alert when the email or phone number already exists
-        alert(error.response.data.message);
-      } else {
-        alert('An error occurred. Please try again later.');
-      }
     }
   };
 

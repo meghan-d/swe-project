@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import './ResetPassword.css';
+import VerificationRequests from "../facade/VerificationRequests";
 
 const ResetPassword = () => {
   const navigate = useNavigate();
@@ -13,29 +13,19 @@ const ResetPassword = () => {
 
   const handleResetPassword = async () => {
     try {
-        // First, verify the reset code
-        const verificationResponse = await axios.post("http://localhost:5001/verify-reset-code", {
-            email,
-            verificationCode
-        });
-
-        if (verificationResponse.data.message === "Verification successful. You can reset your password.") {
-            // Now reset the password
-            const response = await axios.post("http://localhost:5001/reset-password", {
-                email,
-                verificationCode,
-                newPassword
-            });
-
-            setMessage(response.data.message);
-            setError("");
-            setTimeout(() => navigate("/login"), 2000); // Navigate after success
-        }
+            const verificationResponse = await VerificationRequests.verifyResetCode(email, verificationCode);
+            
+            if (verificationResponse.message === "Verification successful. You can reset your password.") {
+              // Now reset the password
+              const response = await VerificationRequests.resetPassword(email, verificationCode, newPassword);
+              setMessage(response.message);
+              setError("");
+              setTimeout(() => navigate("/login"), 2000);
+            }
     } catch (err) {
-        setError(err.response?.data?.error || "Something went wrong. Try again.");
+        setError(err.response?.data?.error || "Something went wrong. Try again. ere");
     }
 };
-
 
   return (
     <div className="reset-container">

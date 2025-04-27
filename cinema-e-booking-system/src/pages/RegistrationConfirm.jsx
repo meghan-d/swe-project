@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import "./Registration.css";
+import VerificationRequests from "../facade/VerificationRequests";
 
 const RegistrationConfirm = () => {
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ const RegistrationConfirm = () => {
 
     console.log("Sending verification request with: ", { email, verificationCode });
 
-    try {
+    /*try {
       const response = await axios.post("http://localhost:5001/verify-email", { email, verificationCode });
 
       if (response.data.message === "Email verified successfully!") {
@@ -45,6 +45,21 @@ const RegistrationConfirm = () => {
       setError("Error verifying email. Please try again.");
     } finally {
       setIsSubmitting(false);
+    }*/
+    try {
+      const res = await VerificationRequests.verifyEmail(email, verificationCode);
+
+      if (res.message === "Email verified successfully!") {
+        navigate("/login");
+      } else {
+        setError(res.message || "Invalid verification code");
+      }
+    } catch (error) {
+      console.error("Error verifying code:", error.res || error);
+      //setError("Error verifying email. Please try again.");
+      setError("Invalid verification code or email. Please try again.");
+    } finally {
+      setIsSubmitting(false); 
     }
   };
 

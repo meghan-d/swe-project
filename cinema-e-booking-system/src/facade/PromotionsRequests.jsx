@@ -23,6 +23,15 @@ const PromotionRequests = {
         } catch (error) {
             console.log("Error fetching promotions:", error);
         }
+    },
+
+    applyPromotion: async (promoCode) => {
+        try {
+            const response = await axios.get(`http://localhost:5001/api/promo/${promoCode}`);
+            return response.data
+        } catch (error) {
+            throw error;
+        }
     }
 };
 

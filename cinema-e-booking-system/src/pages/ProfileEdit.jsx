@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./ProfileEdit.css";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; 
+import ProfileRequests from "../facade/ProfileRequests";
 
 const ProfileEdit = () => {
   const navigate = useNavigate();
@@ -52,13 +52,12 @@ const ProfileEdit = () => {
       console.log("Requesting user data for userId:", userId);
 
       try {
-        const response = await axios.get(`http://localhost:5001/edit-profile?userId=${userId}`);
-        console.log("Response data:", response.data);
+        const response = await ProfileRequests.getUserProfile(userId);
         // Ensure that paymentCards is always an array
         setProfile({
-          ...response.data,
-          paymentCards: response.data.paymentCards || [], // Default to empty array if undefined
-          promotions: response.data.promotions === 1
+          ...response,
+          paymentCards: response.paymentCards || [], // Default to empty array if undefined
+          promotions: response.promotions === 1
         });
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -116,15 +115,10 @@ const ProfileEdit = () => {
     const userId = user.id; 
   
     try {
-      const response = await axios.post("http://localhost:5001/change-password", {
-        userId,
-        currentPassword: passwordData.currentPassword,
-        newPassword: passwordData.newPassword,
-      });
-  
-      alert(response.data.message);
+      const response = await ProfileRequests.changePassword (userId, passwordData);
+      alert(response.message);
     } catch (error) {
-      alert("Error changing password: " + error.response.data.message);
+      alert("Incorrect current password");
     }
   };
 
@@ -138,11 +132,9 @@ const ProfileEdit = () => {
 
   //removes a card from a users profile
   const removeCard = async () => {
+    const user = JSON.parse(sessionStorage.getItem("user"));
     try {
-        await axios.post("http://localhost:5001/delete-card", {
-            userId: JSON.parse(sessionStorage.getItem("user")).id, // Get user ID
-            cardNumber: profile.selectedCard.cardNumber, // Send raw card number
-        });
+        await ProfileRequests.deleteCard(user.id, profile.selectedCard.cardNumber);
 
         setProfile({
             ...profile,
@@ -183,10 +175,7 @@ const ProfileEdit = () => {
 
     const user = JSON.parse(sessionStorage.getItem("user"));
     try {
-      const response = await axios.post("http://localhost:5001/add-new-card", {
-        userId: user.id,
-        ...newCard
-      });
+      const response = await ProfileRequests.addNewCard(user.id, newCard);
   
       setProfile((prevProfile) => ({
         ...prevProfile,
@@ -195,7 +184,7 @@ const ProfileEdit = () => {
   
       setNewCard({ cardType: '', cardNumber: '', expirationDate: '', billingStreet: '', billingCity: '', billingState: '', billingZip: '' });
       setIsAddingCard(false);
-      alert(response.data.message);
+      alert(response.message);
     } catch (error) {
       alert("Error adding card. Please try again.");
     }
@@ -203,39 +192,23 @@ const ProfileEdit = () => {
 
   //Handles all saves aside from change password and payment cards
   const handleSave = async () => {
-    setIsSaving(true);
-    const user = JSON.parse(sessionStorage.getItem("user"));
-  
-    try {
-      const response = await axios.post("http://localhost:5001/update-profile", {
-        userId: user.id,
-        name: profile.name,
-        phone: profile.phone,
-        street: profile.street,
-        city: profile.city,
-        state: profile.state,
-        zip: profile.zip,
-        promotions: profile.promotions ? 1 : 0,
-      });
-  
-      setSuccessMessage(response.data.message);
-    } catch (error) {
-      setSuccessMessage("Error updating profile. Please try again.");
-    } finally {
-      setIsSaving(false);
-    }
+      setIsSaving(true);
+      const user = JSON.parse(sessionStorage.getItem("user"));
+    
+      try {
+        const result = await ProfileRequests.updateProfile(user.id, profile);
+        setSuccessMessage(result.message);
+      } catch (error) {
+        setSuccessMessage("Error updating profile. Please try again.");
+      } finally {
+        setIsSaving(false);
+      }
   };
   
   const saveCardChanges = async () => {
-    try {
-      const response = await axios.put("http://localhost:5001/update-card", {
-        originalCardNumber,
-        updatedCard: profile.selectedCard
-      });
-    // Show success message or refresh
-      alert(response.data.message);
-    } catch (error) {
-      console.error("Failed to update card", error);
+    const res = await ProfileRequests.updateCard(originalCardNumber, profile);
+    if (res) {
+      alert(res.message);
     }
   };
 
