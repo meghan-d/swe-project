@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import "./LoginPage.css";
 import { FaUser, FaLock } from "react-icons/fa";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import LoginRequests from "../facade/LoginRequests";
 
 const LoginPage = () => {
   const [values, setValues] = useState({
@@ -12,39 +12,26 @@ const LoginPage = () => {
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    const res = await LoginRequests.loginUser(values.email, values.password);
 
-    axios.post("http://localhost:5001/login", {
-      username: values.email, // your backend still uses "username"
-      password: values.password
-    })
-      .then((res) => {
-        console.log("Response received:", res.data);
-
-        if (res.data.Status === "Success") {
-          const user = res.data.user;
+    if (res.Status === "Success") {
+      const user = res.user;
           
-          // ✅ Save userId and user info
-          localStorage.setItem("userId", user.id);
-          sessionStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("userId", user.id);
+      sessionStorage.setItem("user", JSON.stringify(user));
 
-          console.log("User stored in session:", user);
-
-          // ✅ Redirect based on role
-          if (values.password.includes("cebsadmin")) {
-            navigate("/admin-dashboard");
-          } else {
-            navigate("/");
-          }
-        } else {
-          alert(res.data.Error || "Incorrect email or password.");
-        }
-      })
-      .catch((err) => {
-        console.error("Axios request failed:", err);
-        alert("Login request failed. Check the console for details.");
-      });
+      console.log("User stored in session:", user);
+      //Redirect based on role
+      if (values.password.includes("cebsadmin")) {
+        navigate("/admin-dashboard");
+      } else  {
+        navigate("/");
+      }
+    } else {
+        alert("Incorrect email or password.");
+    }
   };
 
   return (

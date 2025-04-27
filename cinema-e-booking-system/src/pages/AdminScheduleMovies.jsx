@@ -1,38 +1,27 @@
 import React, { useState, useEffect } from "react";
 import "./AdminScheduleMovies.css";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import ScreeningRequests from "../facade/ScreeningRequests"
 
 const AdminScheduleMovies = () => {
   const navigate = useNavigate();
   const [movies, setMovies] = useState([]);
-
-  // Handles input field changes
-  /*const handleChange = (e) => {
-    setNewMovie({ ...newMovie, [e.target.name]: e.target.value });
-  };
-  */
 
   useEffect(() => {
     fetchScheduledMovies();
   }, []);
 
   const fetchScheduledMovies = async () => {
-    try {
-      const res = await axios.get("http://localhost:5001/screenings"); // Fetch movies from backend
-      console.log(res.data);
-      setMovies(res.data);
-    } catch (error) {
-      console.error("Error fetching movies:", error);
-    }
+    const res = await ScreeningRequests.getAllScreenings();
+    if (res) {
+      setMovies(res);
+    }  
   };
 
   const handleDeleteScheduledMovie = async (id) => {
-    try {
-      await axios.delete(`http://localhost:5001/screenings/${id}`)
+    const res = ScreeningRequests.deleteScreening(id);
+    if (res) {
       setMovies(movies.filter((movie) => movie.id !== id));
-    } catch (error) {
-      console.log("Problem deleting movie:", error);
     }
   };
 
@@ -66,4 +55,3 @@ const AdminScheduleMovies = () => {
 };
 
 export default AdminScheduleMovies;
-

@@ -19,7 +19,7 @@ const ScreeningRequests = {
         }
     },
 
-    getScreeningById: async () => {
+    getScreeningById: async (id) => {
         try {
             const response = await axios.get(`http://localhost:5001/screening-details/${id}`);
             return response.data;
@@ -28,3 +28,5 @@ const ScreeningRequests = {
         }
     }
 }
+
+export default ScreeningRequests;
