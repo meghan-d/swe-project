@@ -2,14 +2,14 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import './MovieDetails.css';
-import { useBooking } from "../context/BookingContext"; // ✅ Added this
+import { useBooking } from "../context/BookingContext"; 
 
 const MovieDetails = () => {
   const { id } = useParams();
   const [movie, setMovie] = useState(null);
   const [showtimes, setShowtimes] = useState([]);
   const navigate = useNavigate();
-  const { setBookingData } = useBooking(); // ✅ Added this
+  const { setBookingData } = useBooking(); 
 
   useEffect(() => {
     axios
@@ -66,7 +66,6 @@ const MovieDetails = () => {
                 className="book-button"
                 onClick={() => {
                   if (sessionStorage.getItem("user") != null) {
-                    // ✅ Save movie info into booking context before navigating
                     setBookingData(prev => ({
                       ...prev,
                       movieID: movie.id,

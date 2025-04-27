@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useBooking } from "../context/BookingContext"; 
 
 export default function MovieCard({ id, rating, title, poster, trailer, allowToBook = true }) {
     const [playTrailer, setPlayTrailer] = useState(false);
     const navigate = useNavigate();
+    const { setBookingData } = useBooking(); 
 
     return (
         <div className="bg-white shadow-2xl p-4 flex flex-col items-center rounded-md w-[200px]">
@@ -12,7 +14,7 @@ export default function MovieCard({ id, rating, title, poster, trailer, allowToB
                 src={poster} 
                 alt={title} 
                 className="w-full h-60 object-cover"
-                onError={(e) => e.target.src = "/default-poster.jpg"}  // ✅ Handle broken images
+                onError={(e) => e.target.src = "/default-poster.jpg"}  // Handle broken images
                 onClick={(e) => navigate(`/movie-details/${id}`)}
             />
 
@@ -38,7 +40,7 @@ export default function MovieCard({ id, rating, title, poster, trailer, allowToB
                     <div>
                         <iframe
                             className="w-full h-40 mt-2"
-                            src={`${trailer}&autoplay=1&mute=1`}  // ✅ Make sure this receives correct trailer link
+                            src={`${trailer}&autoplay=1&mute=1`}  // Make sure this receives correct trailer link
                             title={title}
                             allow="autoplay; encrypted-media"
                             allowFullScreen
@@ -58,10 +60,17 @@ export default function MovieCard({ id, rating, title, poster, trailer, allowToB
                         className="mt-3 px-3 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600"
                         onClick={() =>  {
                             if (sessionStorage.getItem("user") != null) {
-                                navigate(`/select-showtime/${id}`)
-                              } else {
-                                navigate("/login")
-                              }   
+                                setBookingData(prev => ({
+                                ...prev,
+                                movieID: id,
+                                movieTitle: title,
+                            }));
+              
+                                navigate(`/select-showtime/${id}`);
+                            } else {
+                                navigate("/login");
+                            }
+                                
                         }}
                     >
                         Book Now
