@@ -19,6 +19,16 @@ const Checkout = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!/^\d{16}$/.test(payment.cardNumber)) {
+      setError("Card number must be exactly 16 digits.");
+      return;
+    }
+    
+    if (!payment.cardType) {
+      setError("Please select a Card Type.");
+      return;
+    }
+    
   
     const userId = localStorage.getItem("userId");
     const formattedDate = new Date(bookingData.selectedDate).toISOString().split('T')[0];
@@ -130,7 +140,13 @@ const Checkout = () => {
 
         <div className="checkout-section">
           <label>Card Type *</label>
-          <input type="text" name="cardType" value={payment.cardType || ""} onChange={handleChange} required />
+          <select name="cardType" value={payment.cardType || ""} onChange={handleChange} className="input" required>
+            <option value="">Select Card Type</option>
+            <option value="Visa">Visa</option>
+            <option value="MasterCard">MasterCard</option>
+            <option value="Discover">Discover</option>
+            <option value="American Express">American Express</option>
+          </select>
         </div>
 
         <div className="checkout-section">
