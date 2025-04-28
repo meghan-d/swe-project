@@ -28,6 +28,7 @@ const OrderHistory = () => {
           <span>Movie</span>
           <span>Movie Date</span>
           <span>Movie Time</span>
+          <span>Number of Tickets</span>
           <span>Order Total</span>
           <span>Card Used</span>
         </div>
@@ -37,6 +38,7 @@ const OrderHistory = () => {
             <span>{order.movie}</span>
             <span>{new Date(order.bookingDate).toLocaleDateString()}</span>
             <span>{order.timestamp}</span>
+            <span>{order.noOfTickets}</span>
             <span>${order.totalPrice.toFixed(2)}</span>
             <span>{order.cardType} {order.cardNumber?.slice(-4)}</span>
           </div>
