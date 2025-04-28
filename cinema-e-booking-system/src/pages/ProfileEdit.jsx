@@ -172,7 +172,10 @@ const ProfileEdit = () => {
       alert("Please fill in all required fields.");
       return;
     }
-
+    if (!/^\d{16}$/.test(newCard.cardNumber)) {
+      alert("Card number must be exactly 16 digits.");
+      return;
+    }    
     const user = JSON.parse(sessionStorage.getItem("user"));
     try {
       const response = await ProfileRequests.addNewCard(user.id, newCard);
@@ -190,22 +193,32 @@ const ProfileEdit = () => {
     }
   };
 
-  //Handles all saves aside from change password and payment cards
   const handleSave = async () => {
-      setIsSaving(true);
-      const user = JSON.parse(sessionStorage.getItem("user"));
-    
-      try {
-        const result = await ProfileRequests.updateProfile(user.id, profile);
-        setSuccessMessage(result.message);
-      } catch (error) {
-        setSuccessMessage("Error updating profile. Please try again.");
-      } finally {
-        setIsSaving(false);
-      }
-  };
+  setIsSaving(true);
+  if (profile.phone && !/^\d{10}$/.test(profile.phone)) {
+    alert("Phone number must be exactly 10 digits.");
+    setIsSaving(false);
+    return;   
+  }
+  
+  const user = JSON.parse(sessionStorage.getItem("user"));
+  try {
+    const result = await ProfileRequests.updateProfile(user.id, profile);
+    setSuccessMessage(result.message);
+  } catch (error) {
+    setSuccessMessage("Error updating profile. Please try again.");
+  } finally {
+    setIsSaving(false);
+  }
+};
+
   
   const saveCardChanges = async () => {
+    if (profile.selectedCard && !/^\d{16}$/.test(profile.selectedCard.cardNumber)) {
+      alert("Card number must be exactly 16 digits.");
+      return;
+    }
+    
     const res = await ProfileRequests.updateCard(originalCardNumber, profile);
     if (res) {
       alert(res.message);
@@ -265,13 +278,18 @@ const ProfileEdit = () => {
           <h3>Edit Card Information</h3>
           <div className="form-group">
             <label>Card Type</label>
-            <input
-              type="text"
+            <select
               name="cardType"
               value={profile.selectedCard.cardType}
               onChange={handleChange}
               className="input"
-            />
+            >
+              <option value="">Select Card Type</option>
+              <option value="Visa">Visa</option>
+              <option value="MasterCard">MasterCard</option>
+              <option value="Discover">Discover</option>
+              <option value="American Express">American Express</option>
+            </select>
           </div>
           <div className="form-group">
             <label>Card Number</label>
@@ -336,23 +354,47 @@ const ProfileEdit = () => {
         </div>
       )}
    
-      {isAddingCard && profile.paymentCards.length < 4 && (
-      <div>
-        <h3>Add New Card</h3>
+   {isAddingCard && profile.paymentCards.length < 4 && (
+    <div>
+      <h3>Add New Card</h3>
+
       <div className="form-group">
         <label>Card Type</label>
-        <input type="text" name="cardType" value={newCard.cardType} onChange={handleNewCardChange} className="input" />
+        <select
+          name="cardType"
+          value={newCard.cardType}
+          onChange={handleNewCardChange}
+          className="input"
+        >
+          <option value="">Select Card Type</option>
+          <option value="Visa">Visa</option>
+          <option value="MasterCard">MasterCard</option>
+          <option value="Discover">Discover</option>
+          <option value="American Express">American Express</option>
+        </select>
       </div>
+
       <div className="form-group">
         <label>Card Number</label>
         <input
-        type="text" name="cardNumber" value={newCard.cardNumber} onChange={handleNewCardChange} className="input" />
-      </div>
-      <div className="form-group">
-        <label>Expiration Date</label>
-        <input type="month" name="expirationDate" value={newCard.expirationDate} onChange={handleNewCardChange} className="input" />
+          type="text"
+          name="cardNumber"
+          value={newCard.cardNumber}
+          onChange={handleNewCardChange}
+          className="input"
+        />
       </div>
 
+      <div className="form-group">
+        <label>Expiration Date</label>
+        <input
+          type="month"
+          name="expirationDate"
+          value={newCard.expirationDate}
+          onChange={handleNewCardChange}
+          className="input"
+        />
+      </div>
       {/* Billing Address Fields */}
       <div className="form-group">
         <label>Billing Street</label>
