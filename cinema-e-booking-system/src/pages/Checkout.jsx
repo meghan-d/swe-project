@@ -106,8 +106,10 @@ const Checkout = () => {
     });
   };
 
-  const baseTotal =
+  const baseTotal1 =
     bookingData?.seats?.reduce((sum, seat) => sum + seat.getPrice(), 0) || 0;
+
+  const baseTotal = ((baseTotal1 + (3.50) + baseTotal1*0.07));
 
   const discountedTotal = (baseTotal - baseTotal * (parseInt(discount) / 100)).toFixed(2);
 
