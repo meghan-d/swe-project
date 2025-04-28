@@ -30,7 +30,6 @@ const OrderHistory = () => {
           <span>Movie Time</span>
           <span>Number of Tickets</span>
           <span>Order Total</span>
-          <span>Card Used</span>
         </div>
 
         {orders.map((order, index) => (
@@ -40,7 +39,6 @@ const OrderHistory = () => {
             <span>{order.timestamp}</span>
             <span>{order.noOfTickets}</span>
             <span>${order.totalPrice.toFixed(2)}</span>
-            <span>{order.cardType} {order.cardNumber?.slice(-4)}</span>
           </div>
         ))}
       </div>

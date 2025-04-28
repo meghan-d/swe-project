@@ -18,12 +18,13 @@ const connectDB = async () => {
         const db = await mysql.createConnection({
             host: "127.0.0.1",
             user: "root", // Update if your DB user is different
-            password: "Marmar3511@", // Update with your DB password
+            password: "urmomspicklejar", // Update with your DB password
             database: "cinema_ebooking"
         });
         console.log("Connected to database");
         return db;
     } catch (error) {
+
         console.error("Database connection failed:", error);
         process.exit(1);
     }
@@ -878,11 +879,14 @@ app.post("/booking", async (req, res) => {
       const { userID, bookingDate, showtimeID, noOfTickets, totalPrice, cardType, cardNumber } = req.body;
   
       console.log("Received booking:", req.body);
+
+      const encryptedCardType = cardType ? encryptValue(cardType) : null;
+      const encryptedCardNumber = cardNumber ? encryptValue(cardNumber) : null;
   
       await db.execute(`
         INSERT INTO booking (userID, bookingDate, showtimeID, noOfTickets, totalPrice, cardType, cardNumber)
         VALUES (?, ?, ?, ?, ?, ?, ?)
-      `, [userID, bookingDate, showtimeID, noOfTickets, totalPrice, cardType, cardNumber]);
+      `, [userID, bookingDate, showtimeID, noOfTickets, totalPrice, encryptedCardType, encryptedCardNumber]);
   
       res.json({ message: "Booking saved successfully!" });
     } catch (error) {
