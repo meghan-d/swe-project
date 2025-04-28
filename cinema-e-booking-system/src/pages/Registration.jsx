@@ -66,11 +66,21 @@ const Registration = () => {
       newErrors.email = "Email is invalid";
     }
     if (!formData.password) newErrors.password = "Password is required";
-    if (!formData.phone) newErrors.phone = "Phone number is required";
-
+    if (!formData.phone) {
+      newErrors.phone = "Phone number is required";
+    } else if (!/^\d{10}$/.test(formData.phone)) {
+      newErrors.phone = "Phone number must be exactly 10 digits.";
+    }
+    formData.cards.forEach((card, index) => {
+      if (card.cardNumber && !/^\d{16}$/.test(card.cardNumber)) {
+        newErrors[`cardNumber${index}`] = `Card ${index + 1} number must be exactly 16 digits.`;
+      }
+    });
+  
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+  
   
   //sends a users data to the backend
   const saveUserToAdmin = async (newUser) => {
@@ -127,12 +137,25 @@ const Registration = () => {
           <div key={index} className="card-section">
             <div className="form-group">
               <label className="label">Card Number</label>
-              <input type="text" name="cardNumber" value={card.cardNumber} onChange={(e) => handleCardChange(index, e)} className="input"/>
+              <input
+                type="text"
+                name="cardNumber"
+                value={card.cardNumber}
+                onChange={(e) => handleCardChange(index, e)}
+                className="input"
+              />
+              {errors[`cardNumber${index}`] && <div className="error-message">{errors[`cardNumber${index}`]}</div>}
             </div>
             <div className="two-column">
               <div className="form-group">
                 <label className="label">Card Type</label>
-                <input type="text" name="cardType" value={card.cardType} onChange={(e) => handleCardChange(index, e)} className="input"/>
+                <select name="cardType" value={card.cardType} onChange={(e) => handleCardChange(index, e)} className="input">
+                  <option value="">Select Card Type</option>
+                  <option value="Visa">Visa</option>
+                  <option value="MasterCard">MasterCard</option>
+                  <option value="Discover">Discover</option>
+                  <option value="American Express">American Express</option>
+                </select>
               </div>
               <div className="form-group">
                 <label className="label">Expiration Date</label>
