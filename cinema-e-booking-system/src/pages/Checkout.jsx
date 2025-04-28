@@ -41,8 +41,8 @@ const Checkout = () => {
         showtimeID: bookingData.showtimeID,
         noOfTickets: bookingData.seats.length,
         totalPrice: discountedTotal,
-        cardType: payment.cardType,
-        cardNumber: payment.cardNumber
+        cardType: bookingData.cardType,
+        cardNumber: bookingData.cardNumber
       });
       
   
@@ -119,6 +119,12 @@ const Checkout = () => {
       billingState: card.billingState,
       billingZip: card.billingZip,
     });
+
+    setBookingData((prev) => ({
+      ...prev,
+      cardType: card.cardType,
+      cardNumber: card.cardNumber
+    }));
   };
 
   const baseTotal1 =

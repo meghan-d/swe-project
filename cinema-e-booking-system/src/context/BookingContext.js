@@ -11,7 +11,7 @@ export const BookingProvider = ({ children }) => {
     seats: [],
     ticketPrice: 10,
     cardType: "",
-    cardNumber: null
+    cardNumber: ""
   });
 
   return (
