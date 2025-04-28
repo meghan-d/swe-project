@@ -160,6 +160,8 @@ const ProfileEdit = () => {
   const addNewCard = () => {
     if (profile.paymentCards.length < 3) {
       setIsAddingCard(true); // Set adding state to true
+    } else {
+      alert("A maximum of three cards can be saved.")
     }
   };
   
