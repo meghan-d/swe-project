@@ -7,8 +7,8 @@ import BookingRequests from "../facade/BookingRequests";
 import { useNavigate } from "react-router-dom";
 
 
+
 const Checkout = () => {
-  const { bookingData } = useBooking();
   const navigate = useNavigate();
 
   const [payment, setPayment] = useState({ cardNumber: "", expiry: "" });
@@ -16,6 +16,7 @@ const Checkout = () => {
   const [discount, setDiscount] = useState(0);
   const [error, setError] = useState("");
   const [savedCards, setSavedCards] = useState([]);
+  const { bookingData, setBookingData } = useBooking();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -39,9 +40,11 @@ const Checkout = () => {
         bookingDate: formattedDate,
         showtimeID: bookingData.showtimeID,
         noOfTickets: bookingData.seats.length,
-        //totalPrice: bookingData.ticketPrice * bookingData.seats.length,
-        totalPrice: discountedTotal
+        totalPrice: discountedTotal,
+        cardType: payment.cardType,
+        cardNumber: payment.cardNumber
       });
+      
   
       if (res.message === "Booking saved successfully!") {
         const bookingInfo = {
@@ -79,7 +82,19 @@ const Checkout = () => {
   }, []);
 
   const handleChange = (e) => {
-    setPayment({ ...payment, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    
+    setPayment((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+  
+    if (name === "cardType" || name === "cardNumber") {
+      setBookingData((prev) => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const handlePromoApply = async () => {

@@ -9,6 +9,8 @@ const BookingRequests = {
                 showtimeID: bookingData.showtimeID,
                 noOfTickets: bookingData.noOfTickets,
                 totalPrice: bookingData.totalPrice,
+                cardType: bookingData.cardType,
+                cardNumber: bookingData.cardNumber
             });
             return response.data;
         } catch (error) {

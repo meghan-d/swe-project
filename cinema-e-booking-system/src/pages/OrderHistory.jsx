@@ -21,6 +21,7 @@ const OrderHistory = () => {
   return (
     <div className="order-history-container">
       <h2 className="history-title">Order History</h2>
+      <h3>Number of Bookings: {orders.length}</h3><br></br>
       <button onClick={() => navigate("/")} className="back-button">← Back</button>
       <div className="history-table">
         <div className="table-header">
@@ -28,6 +29,7 @@ const OrderHistory = () => {
           <span>Movie Date</span>
           <span>Movie Time</span>
           <span>Order Total</span>
+          <span>Card Used</span>
         </div>
 
         {orders.map((order, index) => (
@@ -36,6 +38,7 @@ const OrderHistory = () => {
             <span>{new Date(order.bookingDate).toLocaleDateString()}</span>
             <span>{order.timestamp}</span>
             <span>${order.totalPrice.toFixed(2)}</span>
+            <span>{order.cardType} {order.cardNumber?.slice(-4)}</span>
           </div>
         ))}
       </div>
