@@ -158,7 +158,7 @@ const ProfileEdit = () => {
 
   //sets the condition that a user can add a new card if they have 3 or less cards on file already, used for the buttons
   const addNewCard = () => {
-    if (profile.paymentCards.length < 4) {
+    if (profile.paymentCards.length < 3) {
       setIsAddingCard(true); // Set adding state to true
     }
   };
