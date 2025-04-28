@@ -61,7 +61,9 @@ export default function OrderSummary() {
 
       <div className="border-b pb-4 mb-4">
         <h2 className="text-lg font-semibold">Cost</h2>
-        <p className="text-gray-300 font-bold mt-2">Total: ${totalPrice}</p>
+        <p className="text-gray-300 font-bold mt-2">Booking Fee: ${(3.50).toFixed(2)}</p>
+        <p className="text-gray-300 font-bold mt-2">Taxes: ${(((3.50) + totalPrice) * 0.07).toFixed(2)}</p>
+        <p className="text-gray-300 font-bold mt-2">Total: ${(totalPrice + (3.50) + totalPrice*0.07).toFixed(2)}</p>
       </div>
 
       <div className="flex gap-3 justify-center">
