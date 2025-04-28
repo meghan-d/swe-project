@@ -126,8 +126,13 @@ const ProfileEdit = () => {
     const selectedCard = profile.paymentCards.find(
       (card) => card.cardNumber === e.target.value
     );
-    setProfile({...profile, selectedCard: selectedCard});
-    setOriginalCardNumber(selectedCard.cardNumber);
+    if (selectedCard) {
+      setProfile({ ...profile, selectedCard: selectedCard });
+      setOriginalCardNumber(selectedCard.cardNumber);
+    } else {
+      console.error("Selected card not found");
+      setProfile({ ...profile, selectedCard: null });
+    }
   };
 
   //removes a card from a users profile
